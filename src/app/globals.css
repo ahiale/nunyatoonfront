@@ -30,4 +30,43 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
 }
+
+@font-face {
+  font-family: 'Signika Negative';
+  src: url('../../public/fonts/Signika_Negative/SignikaNegative-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face{
+
+  font-family: 'Luckiest Guy';
+  src: url('../../public/fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face{
+
+  font-family: 'Overlock';
+  src: url('../../public/fonts/Overlock/Overlock-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+@font-face{
+
+  font-family: 'Grandstander';
+  src: url('../../public/fonts/Grandstander/Grandstander-VariableFont_wght.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+body {
+  font-family: 'Grandstander', sans-serif;
+} 

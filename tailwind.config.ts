@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+// const googlefonts = require("googlefonts");
 
 const config: Config = {
   content: [
@@ -13,8 +14,26 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+
+      fontFamily: {
+        SignikaNegative: ['Signika Negative', 'sans serif'],
+        LuckiestGuy: ['Luckiest Guy', 'sans serif'],
+        Overlock: ['Overlock', 'sans serif'],
+        Grandstander: ['Grandstander', 'sans serif'],
+
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    // googlefonts
+
+    //   (
+    //     {
+    //       fonts: {
+    //         inter: true,
+    //       },
+    //       formats: ['woff2']
+    //     }),
+  ],
 };
 export default config;
