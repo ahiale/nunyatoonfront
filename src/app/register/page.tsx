@@ -3,11 +3,18 @@ import Link from 'next/link';
 import React from 'react';
 import { redirect } from 'next/navigation';
 import RegisterForm from '@/components/registerForm';
+import { FaArrowLeft } from 'react-icons/fa';
 
 const Register = () => {
 
   return (
     <div className="flex justify-center items-center h-screen font-Grandstander text-black" style={{ backgroundImage: 'url(/images/fond.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        {/* Back button */}
+        <div className="absolute top-4 left-4">
+        <Link href="/home" className="text-white text-2xl">
+            <FaArrowLeft />
+        </Link>
+      </div>
       <div className="w-1/3 h-screen hidden lg:block">
         <img src="/images/register.png" alt="Placeholder Image" className="object-cover w-full h-full" />
       </div>

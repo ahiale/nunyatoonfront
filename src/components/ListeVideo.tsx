@@ -7,7 +7,6 @@ interface Categorie {
   id: string;
   titre: string;
   videos: Array<Video>;
-  // categorie: any[];
 }
 
 interface Video {
@@ -16,12 +15,10 @@ interface Video {
   description: string;
   url: string;
   duree: string;
-  // categorie: any[];
 }
 
 export default function ListeVideo() {
   const [categories, setCategories] = useState<Categorie[]>([]);
-  const [videos, setVideos] = useState<Video[]>([]);
 
   useEffect(() => {
     const fetchallCategories = async () => {
@@ -40,61 +37,70 @@ export default function ListeVideo() {
         }
 
         const categorieData: Categorie[] = await categoriesResponse.json();
-
         setCategories(categorieData);
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
       }
     };
 
-
-
     fetchallCategories();
   }, []);
 
   return (
-    <div className=" bg-yellow-200 p-8 min-h-screen py-8 font-Grandstander ">
-    
-<div className="flex space-x-2 overflow-x-auto p-4 rounded-lg mt-10 bg-white bg-opacity-25 ml-10 mr-10 ">
+    <div className="p-8 min-h-screen py-8 font-Grandstander text-white">
+      <div className="flex space-x-2 overflow-x-auto p-4 rounded-lg mt-5 shadow-lg mx-10">
         {categories.map((category, index) => (
           <div
             key={index}
-            className="flex flex-col items-center justify-center w-40 h-20 rounded-lg bg-gray-200 text-black hover:bg-gray-300 transition duration-300"
+            className="flex flex-col items-center justify-center w-40 h-20 rounded-lg bg-blue-800 bg-transparent text-white hover:bg-blue-600 transition duration-300"
           >
             <div className="text-xl">{category.titre}</div>
           </div>
         ))}
       </div>
 
-
       {categories.map((categorie, index) => (
         <div key={index}>
-          <div className="font-Grandstander text-3xl font-semibold text-black mx-10 mt-10  flex justify-between">
+          <div className="font-Grandstander text-3xl font-semibold text-white mx-10 mt-10 flex justify-between">
             <div className="flex">
-              <span className="">{categorie.titre}</span>
+              <span>{categorie.titre}</span>
             </div>
           </div>
 
-          {categorie.videos.map((video, index) => (
-
-            <div className="inline-block ml-10 mr-10" >
-            <div key={index} className="flex flex-wrap items-left  mb-8 space-x-4 gap-x-1" >
-              <Link href="">
-                <div className=" w-60 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500 bg-orange-300 hover:bg-orange-400 m-2 cursor-pointer">
-                  <img
-                    className="w-full"
-                    src="/images/imageCartoon.jpeg"
-                    alt="Entertainment"
-                  />
-                  
+          <div className="relative mx-10 mt-6">
+            <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
+              {categorie.videos.map((video, index) => (
+                <div
+                  key={index}
+                  className="flex-shrink-0 w-60 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500 bg-orange-300 hover:bg-orange-400 cursor-pointer"
+                >
+                  <Link href={video.url}>
+                    <img
+                      className="w-full"
+                      src="/images/imageCartoon.jpeg"
+                      alt={video.titre}
+                    />
+                  </Link>
                 </div>
-              </Link>
-              {/* <div className="max-w-xs w-64 rounded overflow-hidden shadow-xl bg-red-300 transform hover:scale-105 transition duration-500 hover:bg-red-400 m-2">
-            <img className="w-full" src="/images/imageStory.jpeg" alt="Story" />
-          </div> */}
+              ))}
             </div>
-            </div>
-          ))}
+            <button
+              onClick={() => {
+                document.querySelector('.overflow-x-auto')?.scrollBy({ left: -300, behavior: 'smooth' });
+              }}
+              className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => {
+                document.querySelector('.overflow-x-auto')?.scrollBy({ left: 300, behavior: 'smooth' });
+              }}
+              className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+            >
+              &gt;
+            </button>
+          </div>
         </div>
       ))}
     </div>

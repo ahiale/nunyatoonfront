@@ -124,7 +124,9 @@ export default function RegisterForm() {
                     <select
                         id="pays"
                         name="pays"
+                        
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
+                        
                         value={pays}
                         onChange={(e) => setPays(e.target.value)}
                         required

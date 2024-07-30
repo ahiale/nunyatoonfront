@@ -1,7 +1,9 @@
 "use client";
 import Footer from '@/components/Footer';
 import VoirProfil from '@/components/voirProfil';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import { FaImage, FaCalendarAlt, FaKey, FaClock, FaArrowLeft, FaCheckCircle, FaTimesCircle, FaLock, FaPhone, FaEnvelope, FaGlobe } from 'react-icons/fa'; // Importer les icônes nécessaires
 import { FaEdit, FaPlus, FaSignOutAlt, FaUser, FaEllipsisV, FaTrash, FaHistory } from 'react-icons/fa';
 
 interface Profile {
@@ -49,16 +51,16 @@ const ProfileCard = ({ pseudo, image, onEdit, onDelete, onHistory, readProfile }
       </div>
       {showOptions && (
         <div className="mt-2 rounded-md p-2">
-          <button onClick={readProfile} className="block px-4 py-2 text-black hover:bg-yellow-700 w-full text-left">
+          <button onClick={readProfile} className="block px-4 py-2 text-black hover:bg-purple-700 w-full text-left">
             <FaHistory className="mr-2" /> Voir le profil
           </button>
-          <button onClick={onEdit} className="block px-4 py-2 text-black hover:bg-yellow-700 w-full text-left">
+          <button onClick={onEdit} className="block px-4 py-2 text-black hover:bg-purple-700 w-full text-left">
             <FaEdit className="mr-2" /> Modifier
           </button>
-          <button onClick={onDelete} className="block px-4 py-2 text-black hover:bg-yellow-700 w-full text-left">
+          <button onClick={onDelete} className="block px-4 py-2 text-black hover:bg-purple-700 w-full text-left">
             <FaTrash className="mr-2" /> Supprimer
           </button>
-          <button onClick={onHistory} className="block px-4 py-2 text-black hover:bg-yellow-700 w-full text-left">
+          <button onClick={onHistory} className="block px-4 py-2 text-black hover:bg-purple-700 w-full text-left">
             <FaHistory className="mr-2" /> Historique
           </button>
         </div>
@@ -146,101 +148,172 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
     }
   };
 
+  const [errorMessage, setErrorMessage] = useState('');
+
+    const handleAgeChange = (e: { target: { value: any; }; }) => {
+        const newAge = e.target.value;
+        if (newAge < 5 || newAge > 14) {
+            setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
+        } else {
+            setErrorMessage('');
+        }
+        setAge(newAge);
+    };
+
   
   
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-xl mb-4"></h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm" >pseudooo</label>
-            <input className="w-full p-2 border rounded" value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-sm">Image Profil</label>
-            <input type="file" className="w-full p-2 border rounded" onChange={(e) => setImage(URL.createObjectURL(e.target.files?.[0]!))} />
-          </div>
-          {initialProfile ? (
-            <>
-              <div>
-                <label className="block text-sm">Age</label>
-                <input type="number" className="w-full p-2 border rounded" value={age} onChange={(e) => setAge(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Code PIN</label>
-                <input type="password" className="w-full p-2 border rounded" value={pin} onChange={(e) => setPin(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Jours de connexion</label>
-                <div className="flex flex-wrap gap-2">
-                  {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map((day) => (
-                    <button
-                      key={day}
-                      className={`p-2 border rounded ${days.includes(day) ? 'bg-yellow-700' : 'bg-white'}`}
-                      onClick={() => handleDaysChange(day)}
-                    >
-                      {day}
-                    </button>
-                  ))}
+            <div className="bg-white p-8 rounded-lg w-full max-w-md shadow-lg">
+                {errorMessage && (
+                    <div className="text-red-600 mb-4">
+                        {errorMessage}
+                    </div>
+                )}
+                <div className="space-y-4">
+                    <div className="relative">
+                        <input
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            placeholder="Pseudo"
+                            value={pseudo}
+                            onChange={(e) => setPseudo(e.target.value)}
+                        />
+                        <FaUser className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    <div className="relative">
+                        <input
+                            type="file"
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            onChange={(e) => setImage(URL.createObjectURL(e.target.files?.[0]!))}
+                        />
+                        <FaImage className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    {initialProfile ? (
+                        <>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                    placeholder="Âge"
+                                    value={age}
+                                    onChange={handleAgeChange}
+                                />
+                                <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
+                            </div>
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                    placeholder="Code PIN"
+                                    value={pin}
+                                    onChange={(e) => setPin(e.target.value)}
+                                />
+                                <FaKey className="absolute left-3 top-3 text-gray-400" />
+                            </div>
+                            <div>
+                                <label className="block text-sm">Jours de connexion</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map((day) => (
+                                        <button
+                                            key={day}
+                                            className={`p-2 border rounded ${days.includes(day) ? 'bg-purple-700 text-white' : 'bg-white'}`}
+                                            onClick={() => handleDaysChange(day)}
+                                        >
+                                            {day}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex space-x-4">
+                                <div className="relative">
+                                    <input
+                                        type="time"
+                                        className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                        placeholder="Heure de début"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                    />
+                                    <FaClock className="absolute left-3 top-3 text-gray-400" />
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type="time"
+                                        className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                        placeholder="Heure de fin"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                    />
+                                    <FaClock className="absolute left-3 top-3 text-gray-400" />
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                    placeholder="Âge"
+                                    value={age}
+                                    onChange={handleAgeChange}
+                                />
+                                <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
+                            </div>
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                    placeholder="Code PIN"
+                                    value={pin}
+                                    onChange={(e) => setPin(e.target.value)}
+                                />
+                                <FaKey className="absolute left-3 top-3 text-gray-400" />
+                            </div>
+                            <div>
+                                <label className="block text-sm">Jours de connexion</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((day) => (
+                                        <button
+                                            key={day}
+                                            className={`p-2 border rounded ${days.includes(day) ? 'bg-purple-700 text-white' : 'bg-white'}`}
+                                            onClick={() => handleDaysChange(day)}
+                                        >
+                                            {day}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex space-x-4">
+                                <div className="relative">
+                                    <input
+                                        type="time"
+                                        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-10"
+                                        placeholder="Heure de début"
+                                        value={startTime}
+                                        onChange={(e) => setStartTime(e.target.value)}
+                                    />
+                                    <FaClock className="absolute left-3 top-3 text-gray-400" />
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type="time"
+                                        className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                        placeholder="Heure de fin"
+                                        value={endTime}
+                                        onChange={(e) => setEndTime(e.target.value)}
+                                    />
+                                    <FaClock className="absolute left-3 top-3 text-gray-400" />
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
-              </div>
-              <div className="flex space-x-4">
-                <div>
-                  <label className="block text-sm">Heure de début</label>
-                  <input type="time" className="w-full p-2 border rounded" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
+                <div className="flex space-x-4 mt-4">
+                    <button onClick={handleSubmit} className="p-2 bg-purple-700 text-white rounded">Enregistrer</button>
+                    <button onClick={onClose} className="p-2 bg-gray-400 text-white rounded">Annuler</button>
                 </div>
-                <div>
-                  <label className="block text-sm">Heure de fin</label>
-                  <input type="time" className="w-full p-2 border rounded" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              
-              
-              <div>
-                <label className="block text-sm">Age</label>
-                <input type="number" className="w-full p-2 border rounded" value={age} onChange={(e) => setAge(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Code PIN</label>
-                <input type="password" className="w-full p-2 border rounded" value={pin} onChange={(e) => setPin(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Jours de connexion</label>
-                <div className="flex flex-wrap gap-2">
-                  {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((day) => (
-                    <button
-                      key={day}
-                      className={`p-2 border rounded ${days.includes(day) ? 'bg-yellow-700' : 'bg-white'}`}
-                      onClick={() => handleDaysChange(day)}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <div>
-                  <label className="block text-sm">Heure de début</label>
-                  <input type="time" className="w-full p-2 border rounded" value={startTime} onChange={(e) => setStartTime(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block text-sm">Heure de fin</label>
-                  <input type="time" className="w-full p-2 border rounded" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-                </div>
-              </div>
-            </>
-          )}
+            </div>
         </div>
-        <div className="flex space-x-4 mt-4">
-          <button onClick={handleSubmit} className="p-2 bg-yellow-700 rounded">Enregistrer</button>
-          <button onClick={onClose} className="p-2 bg-gray-400 rounded">Annuler</button>
-        </div>
-      </div>
-    </div>
   );
 };
 
@@ -360,99 +433,170 @@ const ProfileEditForm = ({ onClose, onSubmit, initialProfile }: { onClose: () =>
     }
   };
   
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleAgeChange = (e: { target: { value: any; }; }) => {
+      const newAge = e.target.value;
+      if (newAge < 5 || newAge > 14) {
+          setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
+      } else {
+          setErrorMessage('');
+      }
+      setEditAge(newAge);
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-xl mb-4"></h2>
+    <div className="bg-white p-8 rounded-lg w-full max-w-md shadow-lg">
+        {errorMessage && (
+            <div className="text-red-600 mb-4">
+                {errorMessage}
+            </div>
+        )}
+        <h2 className="text-xl mb-4">Modifier le Profil</h2>
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm" >pseudo</label>
-            <input className="w-full p-2 border rounded" value={editPseudo} onChange={(e) => setEditPseudo(e.target.value)} />
-          </div>
-          <div>
-            <label className="block text-sm">Image Profil</label>
-            <input type="file" className="w-full p-2 border rounded" onChange={(e) => setEditImage(URL.createObjectURL(e.target.files?.[0]!))} />
-          </div>
-          {initialProfile ? (
-            <>
-              <div>
-                <label className="block text-sm">Age</label>
-                <input type="number" className="w-full p-2 border rounded" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Code PIN</label>
-                <input type="password" className="w-full p-2 border rounded" value={editPin} onChange={(e) => setEditPin(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Jours de connexion</label>
-                <div className="flex flex-wrap gap-2">
-                  {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map((editDay) => (
-                    <button
-                      key={editDay}
-                      className={`p-2 border rounded ${editDays.includes(editDay) ? 'bg-yellow-700' : 'bg-white'}`}
-                      onClick={() => handleDaysChange(editDay)}
-                    >
-                      {editDay}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <div>
-                  <label className="block text-sm">Heure de début</label>
-                  <input type="time" className="w-full p-2 border rounded" value={editStartTime} onChange={(e) => setEditStartTime(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block text-sm">Heure de fin</label>
-                  <input type="time" className="w-full p-2 border rounded" value={editEndTime} onChange={(e) => setEditEndTime(e.target.value)} />
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              
-              
-              <div>
-                <label className="block text-sm">Age</label>
-                <input type="number" className="w-full p-2 border rounded" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Code PIN</label>
-                <input type="password" className="w-full p-2 border rounded" value={editPin} onChange={(e) => setEditPin(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm">Jours de connexion</label>
-                <div className="flex flex-wrap gap-2">
-                  {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((editDay) => (
-                    <button
-                      key={editDay}
-                      className={`p-2 border rounded ${editDay.includes(editDay) ? 'bg-yellow-700' : 'bg-white'}`}
-                      onClick={() => handleDaysChange(editDay)}
-                    >
-                      {editDay}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex space-x-4">
-                <div>
-                  <label className="block text-sm">Heure de début</label>
-                  <input type="time" className="w-full p-2 border rounded" value={editStartTime} onChange={(e) => setEditStartTime(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block text-sm">Heure de fin</label>
-                  <input type="time" className="w-full p-2 border rounded" value={editEndTime} onChange={(e) => setEditEndTime(e.target.value)} />
-                </div>
-              </div>
-            </>
-          )}
+            <div className="relative">
+                <input
+                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                    placeholder="Pseudo"
+                    value={editPseudo}
+                    onChange={(e) => setEditPseudo(e.target.value)}
+                />
+                <FaUser className="absolute left-3 top-3 text-gray-400" />
+            </div>
+            <div className="relative">
+                <input
+                    type="file"
+                    className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                    onChange={(e) => setEditImage(URL.createObjectURL(e.target.files?.[0]!))}
+                />
+                <FaImage className="absolute left-3 top-3 text-gray-400" />
+            </div>
+            {initialProfile ? (
+                <>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            placeholder="Âge"
+                            value={editAge}
+                            onChange={handleAgeChange}
+                        />
+                        <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    <div className="relative">
+                        <input
+                            type="password"
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            placeholder="Code PIN"
+                            value={editPin}
+                            onChange={(e) => setEditPin(e.target.value)}
+                        />
+                        <FaKey className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    <div>
+                        <label className="block text-sm">Jours de connexion</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map((editDay) => (
+                                <button
+                                    key={editDay}
+                                    className={`p-2 border rounded ${editDays.includes(editDay) ? 'bg-purple-700 text-white' : 'bg-white'}`}
+                                    onClick={() => handleDaysChange(editDay)}
+                                >
+                                    {editDay}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex space-x-4">
+                        <div className="relative">
+                            <input
+                                type="time"
+                                className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                placeholder="Heure de début"
+                                value={editStartTime}
+                                onChange={(e) => setEditStartTime(e.target.value)}
+                            />
+                            <FaClock className="absolute left-3 top-3 text-gray-400" />
+                        </div>
+                        <div className="relative">
+                            <input
+                                type="time"
+                                className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                placeholder="Heure de fin"
+                                value={editEndTime}
+                                onChange={(e) => setEditEndTime(e.target.value)}
+                            />
+                            <FaClock className="absolute left-3 top-3 text-gray-400" />
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            placeholder="Âge"
+                            value={editAge}
+                            onChange={handleAgeChange}
+                        />
+                        <FaCalendarAlt className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    <div className="relative">
+                        <input
+                            type="password"
+                            className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                            placeholder="Code PIN"
+                            value={editPin}
+                            onChange={(e) => setEditPin(e.target.value)}
+                        />
+                        <FaKey className="absolute left-3 top-3 text-gray-400" />
+                    </div>
+                    <div>
+                        <label className="block text-sm">Jours de connexion</label>
+                        <div className="flex flex-wrap gap-2">
+                            {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'].map((editDay) => (
+                                <button
+                                    key={editDay}
+                                    className={`p-2 border rounded ${editDays.includes(editDay) ? 'bg-purple-700 text-white' : 'bg-white'}`}
+                                    onClick={() => handleDaysChange(editDay)}
+                                >
+                                    {editDay}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="flex space-x-4">
+                        <div className="relative">
+                            <input
+                                type="time"
+                                className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                placeholder="Heure de début"
+                                value={editStartTime}
+                                onChange={(e) => setEditStartTime(e.target.value)}
+                            />
+                            <FaClock className="absolute left-3 top-3 text-gray-400" />
+                        </div>
+                        <div className="relative">
+                            <input
+                                type="time"
+                                className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
+                                placeholder="Heure de fin"
+                                value={editEndTime}
+                                onChange={(e) => setEditEndTime(e.target.value)}
+                            />
+                            <FaClock className="absolute left-3 top-3 text-gray-400" />
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
         <div className="flex space-x-4 mt-4">
-          <button onClick={handleSubmit} className="p-2 bg-yellow-700 rounded">Enregistrer</button>
-          <button onClick={onClose} className="p-2 bg-gray-400 rounded">Annuler</button>
+            <button onClick={handleSubmit} className="p-2 bg-purple-700 text-white rounded">Enregistrer</button>
+            <button onClick={onClose} className="p-2 bg-gray-400 text-white rounded">Annuler</button>
         </div>
-      </div>
     </div>
+</div>
   );
 };
 
@@ -490,11 +634,15 @@ const DeleteConfirmation = ({ onConfirm, onCancel, initialProfile}: { onConfirm:
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg w-full max-w-sm">
-        <h2 className="text-xl mb-4">Êtes-vous sûr de vouloir supprimer ce profil ?</h2>
-        <div className="flex space-x-4 justifiy-center">
-          <button onClick={onConfirm} className="p-2 bg-red-600 text-white rounded">Oui</button>
-          <button onClick={onCancel} className="p-2 bg-gray-200 rounded">Non</button>
+      <div className="bg-gray-200 p-4 rounded-lg w-full max-w-xs ">
+        <h2 className="text-xl mb-4 font-bold">Êtes-vous sûr?</h2>
+        <div className="flex space-x-4 justifiy-center items-center">
+          <button onClick={onConfirm} className="p-2 bg-purple-600 text-white rounded">
+          <FaCheckCircle className="h-4 w-4" />
+            </button>
+          <button onClick={onCancel} className="p-2 bg-red-600 text-white rounded">
+          <FaTimesCircle className="h-4 w-4" />
+            </button>
         </div>
       </div>
     </div>
@@ -616,33 +764,39 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gradient-to-l from-yellow-100 bg-opaticy-200 to-yellow-50 min-h-screen bg-white font-Grandstander text-black">
+    <div className="flex flex-col bg-gradient-to-r from-purple-700 to-blue-900 bg-opacity-75 min-h-screen  font-Grandstander text-black">
+      {/* Back button */}
+      <div className="absolute top-4 left-4">
+        <Link href="/parent" className="text-white text-2xl">
+            <FaArrowLeft />
+        </Link>
+      </div>
       <div className="flex-grow p-8 space-y-8">
         {/* Première carte */}
-        <div className="bg-yellow-700 p-6 rounded-lg mb-8 shadow-lg max-w-3xl mx-auto">
+        <div className="bg-purple-700 p-6 rounded-lg mb-8 shadow-lg max-w-3xl mx-auto" style={{ backgroundImage: 'url(/images/fondBleuNuit.jpg)' }}>
           <div className="flex items-center space-x-4 mb-4 cursor-pointer" onClick={() => setShowParentEditForm(true)}>
-            <FaUser className="text-black" size={40} />
+            <FaUser className="text-gray-800" size={50} />
             <div>
               <h2 className="text-white font-semibold text-2xl">{loggedParent.nom}</h2>
-              <p className="text-gray-900">Bienvenue, vous avez {readenfant?.length} profils enfants.</p>
+              <p className="text-gray-900">Bienvenue, vous avez {readenfant?.length} profil(s) enfants.</p>
             </div>
           </div>
           <div className="flex flex-col space-y-2 items-start">
-            <button onClick={() => setShowParentEditForm(true)} className="text-black p-2 rounded-lg flex items-center justify-center space-x-1">
+            <button onClick={() => setShowParentEditForm(true)} className="text-white p-2 rounded-lg flex items-center justify-center space-x-1">
               <FaEdit /> <span>Modifier Profil</span>
             </button>
-            <button onClick={openAddForm} className="text-black p-2 rounded-lg flex items-center justify-center space-x-1">
+            <button onClick={openAddForm} className="text-white p-2 rounded-lg flex items-center justify-center space-x-1">
               <FaPlus /> <span>Ajouter</span>
             </button>
-            <button className="text-black p-2 rounded-lg flex items-center justify-center space-x-1">
+            <button className="text-white p-2 rounded-lg flex items-center justify-center space-x-1">
               <FaSignOutAlt /> <span>Déconnexion</span>
             </button>
           </div>
         </div>
 
         {/* Deuxième carte */}
-        <div className="dark:bg-yellow-700 p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
-          <h3 className="text-black text-xl mb-4">Profils Enfants</h3>
+        <div className="dark:bg-purple-700 p-6 rounded-lg shadow-lg max-w-3xl mx-auto" style={{ backgroundImage: 'url(/images/fondBleuNuit.jpg)' }}>
+          <h3 className="text-white text-xl mb-4 font-bold">Profils Enfants</h3>
           <div className="space-y-4">
             {readenfant?.map((profile, index) => (
               <ProfileCard
@@ -694,57 +848,111 @@ const ParentProfileForm = ({ onClose, onSubmit }: { onClose: () => void; onSubmi
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg w-full max-w-md">
-        <h2 className="text-xl mb-4">Modifier Profil Parent</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm">Nom</label>
-            <input className="w-full p-2 border rounded" value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
-          </div>
-          <div className="flex space-x-4">
-            <div>
-              <label className="block text-sm">Age</label>
-              <input type="number" className="w-full p-2 border rounded" value={age} onChange={(e) => setAge(e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-sm">Email</label>
-              <input type="email" className="w-full p-2 border rounded" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-          </div>
-          <div className="flex space-x-4">
-            <div>
-              <label className="block text-sm">Contact</label>
-              <input type="text" className="w-full p-2 border rounded" value={contact} onChange={(e) => setContact(e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-sm">Pays</label>
-              <select className="w-full p-2 border rounded" value={country} onChange={(e) => setCountry(e.target.value)}>
-                <option value="">Sélectionner un pays</option>
-                <option value="France">France</option>
-                <option value="Belgique">Belgique</option>
-                <option value="Canada">Canada</option>
-                {/* Ajouter d'autres pays au besoin */}
-              </select>
-            </div>
-          </div>
-          <div className="flex space-x-4">
-            <div>
-              <label className="block text-sm">Mot de passe</label>
-              <input type="password" className="w-full p-2 border rounded" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            <div>
-              <label className="block text-sm">Code Parental</label>
-              <input type="password" className="w-full p-2 border rounded" value={parentalCode} onChange={(e) => setParentalCode(e.target.value)} />
-            </div>
-          </div>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
+  <div className="bg-white p-8 rounded-lg w-full max-w-md">
+    <h2 className="text-xl mb-4">Modifier Profil Parent</h2>
+    <div className="space-y-4">
+      <div className="relative">
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+          <FaUser className="text-gray-500" />
+        </span>
+        <input
+          className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+          placeholder="Nom"
+          value={pseudo}
+          onChange={(e) => setPseudo(e.target.value)}
+        />
+      </div>
+      <div className="flex space-x-4">
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaUser className="text-gray-500" />
+          </span>
+          <input
+            type="number"
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            placeholder="Age"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
         </div>
-        <div className="flex space-x-4 mt-4">
-          <button onClick={handleSubmit} className="p-2 bg-yellow-200 rounded">Enregistrer</button>
-          <button onClick={onClose} className="p-2 bg-gray-200 rounded">Annuler</button>
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaEnvelope className="text-gray-500" />
+          </span>
+          <input
+            type="email"
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+      </div>
+      <div className="flex space-x-4">
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaPhone className="text-gray-500" />
+          </span>
+          <input
+            type="text"
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            placeholder="Contact"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
+          />
+        </div>
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaGlobe className="text-gray-500" />
+          </span>
+          <select
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+          >
+            <option value="">Sélectionner un pays</option>
+            <option value="France">France</option>
+            <option value="Belgique">Belgique</option>
+            <option value="Canada">Canada</option>
+            {/* Ajouter d'autres pays au besoin */}
+          </select>
+        </div>
+      </div>
+      <div className="flex space-x-4">
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaLock className="text-gray-500" />
+          </span>
+          <input
+            type="password"
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            placeholder="Mot de passe"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="relative w-1/2">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <FaKey className="text-gray-500" />
+          </span>
+          <input
+            type="password"
+            className="w-full pl-10 p-2 border rounded focus:border-purple-500"
+            placeholder="Code Parental"
+            value={parentalCode}
+            onChange={(e) => setParentalCode(e.target.value)}
+          />
         </div>
       </div>
     </div>
+    <div className="flex space-x-4 mt-4">
+      <button onClick={handleSubmit} className="p-2 bg-purple-700 rounded text-white">Enregistrer</button>
+      <button onClick={onClose} className="p-2 bg-gray-400 rounded text-white">Annuler</button>
+    </div>
+  </div>
+</div>
+
   );
 };
 

@@ -1,9 +1,11 @@
 "use client";
 import LogoutButton from "@/components/LogoutButton";
-import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import { FaArrowLeft, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import Modal from "react-modal";
+import Link from "next/link";
+import Navbar from "@/components/Navbar";
 
 interface Profile {
   nom: string;
@@ -258,6 +260,16 @@ const Profiles: React.FC = () => {
       className="flex flex-col items-center justify-center space-y-8 p-8 font-Grandstander w-screen h-screen bg-cover bg-center"
       style={{ backgroundImage: 'url(/images/fondBleuNuit.jpg)' }}
     >
+        {/* Back button */}
+        {/* <div className="absolute top-4 left-4">
+        <Link href="/home" className="text-white text-2xl">
+            <FaArrowLeft />
+        </Link>
+      </div> */}
+       <div className="absolute top-5 left-0 w-full">
+    <Navbar />
+  </div>
+     
       <h1 className="text-5xl lg:text-5xl font-bold text-white mb-8">
         Quel est votre profil?
       </h1>
@@ -307,9 +319,6 @@ const Profiles: React.FC = () => {
               )
             )
         )}
-      </div>
-      <div className="fixed top-4 right-4">
-        <LogoutButton />
       </div>
     </div>
   );
