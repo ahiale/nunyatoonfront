@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FaUser, FaEnvelope, FaPhone, FaGlobe, FaLock, FaKey } from "react-icons/fa";
+import ParentProfileForm from "./parentProfilForm";
+import { Profile } from "../../type";
 
 interface Parent {
   country: string;
@@ -18,6 +20,7 @@ const UserTable: React.FC = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [parentToDelete, setParentToDelete] = useState<string | null>(null);
   const [currentParent, setCurrentParent] = useState<Parent | null>(null);
+  const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [formData, setFormData] = useState({
     nom: "",
     email: "",
@@ -26,6 +29,10 @@ const UserTable: React.FC = () => {
     password: "",
     parentalCode: ""
   });
+
+  // ID et email spécifiques du parent à retirer
+  const specificParentId = "389a775f-b784-4b19-8f32-2133c4"; // Remplacez par l'ID réel
+  const specificParentEmail = "lieben@gmail.com"; // Remplacez par l'email réel
 
   useEffect(() => {
     const fetchParentsAndEnfants = async () => {
@@ -74,12 +81,13 @@ const UserTable: React.FC = () => {
       password: "",
       parentalCode: ""
     });
-    setIsEditFormOpen(true);
+    // setIsEditFormOpen(true);
   };
 
   const handleDelete = async () => {
     if (parentToDelete) {
       try {
+        // Suppression du parent spécifique en backend
         const deleteResponse = await fetch(`http://127.0.0.1:8000/parent/${parentToDelete}`, {
           method: "DELETE"
         });
@@ -88,6 +96,7 @@ const UserTable: React.FC = () => {
           throw new Error(`Erreur lors de la suppression du parent: ${deleteResponse.statusText}`);
         }
 
+        // Retirer le parent de la liste
         setParents(parentsWithChildren.filter(parent => parent.id !== parentToDelete));
         setParentToDelete(null);
         setIsDialogOpen(false);
@@ -106,6 +115,10 @@ const UserTable: React.FC = () => {
     setIsDialogOpen(false);
     setParentToDelete(null);
   };
+
+  function closeForm() {
+    setIsEditFormOpen(false);
+  }
 
   const handleSubmit = async () => {
     if (currentParent) {
@@ -140,7 +153,7 @@ const UserTable: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
-  };
+  };  
 
   return (
     <div className="overflow-x-auto">
@@ -177,9 +190,14 @@ const UserTable: React.FC = () => {
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button
                   className="text-indigo-600 hover:text-indigo-900 mx-2"
-                  onClick={() => handleEdit(parent)}
+                  onClick={() => {
+                    handleEdit(parent); 
+                    setIsEditFormOpen(true); 
+                    setSelectedParent(parent)
+                  }}
                 >
                   <FontAwesomeIcon icon={faEdit} title="Modifier" />
+                  
                 </button>
                 <button
                   className="text-red-600 hover:text-red-900 mx-2"
@@ -216,108 +234,14 @@ const UserTable: React.FC = () => {
         </div>
       )}
 
-      {/* Edit Form Modal */}
       {isEditFormOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
-          <div className="bg-white p-8 rounded-lg w-full max-w-md">
-            <h2 className="text-xl mb-4">Modifier Profil Parent</h2>
-            <div className="space-y-4">
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <FaUser className="text-gray-500" />
-                </span>
-                <input
-                  name="nom"
-                  className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                  placeholder="Nom"
-                  value={formData.nom}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex space-x-4">
-                <div className="relative w-1/2">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaUser className="text-gray-500" />
-                  </span>
-                  <input
-                    name="email"
-                    className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                    placeholder="Email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="relative w-1/2">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                    <FaPhone className="text-gray-500" />
-                  </span>
-                  <input
-                    name="contact"
-                    className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                    placeholder="Contact"
-                    value={formData.contact}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <FaGlobe className="text-gray-500" />
-                </span>
-                <input
-                  name="country"
-                  className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <FaKey className="text-gray-500" />
-                </span>
-                <input
-                  name="password"
-                  className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                  placeholder="Password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <FaKey className="text-gray-500" />
-                </span>
-                <input
-                  name="parentalCode"
-                  className="w-full pl-10 p-2 border rounded focus:border-purple-500"
-                  placeholder="Parental Code"
-                  type="text"
-                  value={formData.parentalCode}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="flex justify-end space-x-4 mt-4">
-                <button
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg"
-                  onClick={handleSubmit}
-                >
-                  Enregistrer
-                </button>
-                <button
-                  className="px-4 py-2 bg-gray-400 text-white rounded-lg"
-                  onClick={handleCloseEditForm}
-                >
-                  Annuler
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ParentProfileForm onClose={closeForm} onSubmit={handleSubmit} parentData={selectedParent} />
       )}
+
+    
     </div>
+
+
   );
 };
 

@@ -11,7 +11,6 @@ interface VideoFormProps {
 }
 
 const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
-  const [videoType, setVideoType] = useState('movie');
   const [videoSource, setVideoSource] = useState('');
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoLink, setVideoLink] = useState('');
@@ -51,8 +50,6 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
     fetchallCategories();
   }, []);
 
-
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setVideoFile(e.target.files[0]);
@@ -69,61 +66,53 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(videoFile)
-
-    
-
-    if (videoSource === '4' && videoFile ==null ) {
-      console.error("Aucun fichier sélectionné");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", videoFile!);
-    
 
     try {
+      let videoUrl = '';
+      if (videoSource === '4') {
+        if (!videoFile) {
+          console.error("Aucun fichier sélectionné");
+          return;
+        }
 
-      const response = await fetch("http://127.0.0.1:8000/video/upload/", {
-        method: "POST",
-        body:formData,
-      });
-      const dataVideoUpload= await response.json()
+        const formData = new FormData();
+        formData.append("file", videoFile!);
 
+        const response = await fetch("http://127.0.0.1:8000/video/upload/", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!response.ok) {
-        throw new Error(`Erreur: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Erreur: ${response.statusText}`);
+        }
+
+        const dataVideoUpload = await response.json();
+        videoUrl = dataVideoUpload.url;
+      } else {
+        videoUrl = videoLink;
       }
 
-
       const formDataTwo = new FormData();
-
-      console.log(couverture)
-      console.log(title)
-      console.log(description)
-      console.log(videoSource)
-      console.log(category)
-
       formDataTwo.append("couverture", couverture!);
-      formDataTwo.append("titre", title!);
-      formDataTwo.append("description", description!);
-      formDataTwo.append("video_source", videoSource!);
-      formDataTwo.append("url", dataVideoUpload.url);
-      formDataTwo.append("categorie_id", category!);
+      formDataTwo.append("titre", title);
+      formDataTwo.append("description", description);
+      formDataTwo.append("video_source", videoSource);
+      formDataTwo.append("url", videoUrl);
+      formDataTwo.append("categorie_id", category);
       formDataTwo.append("duree", "1h");
       formDataTwo.append("type_video", "1");
-      
+
       const responsetwo = await fetch("http://127.0.0.1:8000/video/createVideo", {
         method: "POST",
-        body:formDataTwo,
+        body: formDataTwo,
       });
 
       if (!responsetwo.ok) {
-        throw new Error(`Erreur: ${response.statusText}`);
+        throw new Error(`Erreur: ${responsetwo.statusText}`);
       }
 
       const resulttwo = await responsetwo.json();
-
       console.log(resulttwo); // Affiche la réponse du serveur
 
       onClose(); // Ferme le formulaire après la soumission
@@ -131,10 +120,6 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
       console.error("Erreur lors du téléchargement du fichier:", error);
     }
   };
-
-  // function setCouverture(value: string): void {
-  //   throw new Error('Function not implemented.');
-  // }
 
   return (
     <div className="fixed inset-0 bg-gray-900 bg-opacity-70 flex justify-center items-center overflow-y-auto">
@@ -159,38 +144,16 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
             <option value="4">Upload</option>
           </select>
         </div>
-        {videoSource === '1' && (
+        {videoSource !== '4' && (
           <div className="relative">
             <FaPlay className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Lien YouTube"
-              className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
-              value={videoLink}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoLink(e.target.value)}
-              required
-            />
-          </div>
-        )}
-        {videoSource === '2' && (
-          <div className="relative">
-            <FaPlay className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Lien Dailymotion"
-              className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
-              value={videoLink}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoLink(e.target.value)}
-              required
-            />
-          </div>
-        )}
-        {videoSource === '3' && (
-          <div className="relative">
-            <FaPlay className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Lien ANIMESAMA"
+              placeholder={
+                videoSource === '1' ? 'Lien YouTube' :
+                videoSource === '2' ? 'Lien Dailymotion' :
+                'Lien ANIMESAMA'
+              }
               className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
               value={videoLink}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoLink(e.target.value)}
@@ -200,23 +163,13 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
         )}
         {videoSource === '4' && (
           <div className="border-dashed border-2 border-gray-600 p-4 rounded-md text-center h-30 flex flex-col justify-center">
-     
-          <input
-            type="file"
-            placeholder="couverture"
-            className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
-            required
-            onChange={handleFileChange}
-          />
-        
-            {/* <label htmlFor="file-upload" className="cursor-pointer">
-              <div className="flex flex-col items-center justify-center">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-4-4V4a4 4 0 014-4h5.586a1 1 0 01.707.293l7.414 7.414a1 1 0 01.293.707V12a4 4 0 01-4 4H7z"></path>
-                </svg>
-                <p className="mt-2 text-sm text-gray-500">Glissez les fichiers ici pour les télécharger </p>
-              </div>
-            </label> */}
+            <input
+              type="file"
+              placeholder="Video File"
+              className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
+              required
+              onChange={handleFileChange}
+            />
           </div>
         )}
         <div className="relative">
@@ -234,50 +187,44 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
           <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="file"
-            placeholder="couverture"
+            placeholder="Couverture"
             className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
             onChange={handleCouvertureChange}
             required
           />
         </div>
-
         <div className="relative">
           <FaTags className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <select
-              value={category}
-              onChange={handleCategoryChange}
-            className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none text-black"
+            value={category}
+            onChange={handleCategoryChange}
+            className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
             required
           >
             <option value="" disabled>Choisissez une catégorie</option>
-            <div></div>
             {categories.map((category, index) => (
-              <option
-               key={index} 
-               value={category.id}>
-              
-                {category.titre} 
-                
-                </option>
+              <option key={index} value={category.id}>
+                {category.titre}
+              </option>
             ))}
           </select>
-
         </div>
         <div className="relative">
           <FaInfoCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Description"
+          <textarea
+            placeholder="Description de la Vidéo"
             className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
             value={description}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
             required
           />
         </div>
-        <div className="flex justify-end mt-4">
-          <button type="submit" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Publier</button>
-          <button type="button" className="px-4 py-2 bg-red-600 text-gray-300 rounded-lg ml-2 hover:bg-red-700" onClick={onClose}>Annuler</button>
-        </div>
+        <button
+          type="submit"
+          className="w-full bg-purple-600 text-white p-2 rounded-md hover:bg-purple-700"
+        >
+          Ajouter la Vidéo
+        </button>
       </form>
     </div>
   );

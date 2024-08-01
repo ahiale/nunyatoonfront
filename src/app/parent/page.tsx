@@ -1,13 +1,17 @@
+"use client";
 import Footer from "@/components/Footer";
 import HeroSectionContainer from "@/components/heroSection";
 import ListeVideo from "@/components/ListeVideo";
 import Navbar from "@/components/Navbar";
+import { store } from "@/store/store";
 import Image from 'next/image';
 import { FaPlay, FaSearch } from 'react-icons/fa';
+import { Provider } from "react-redux";
 
 export default function Parent() {
   return (
-    <>
+  <Provider store={store}>
+      <>
     <div
       className=" bg-gradient-to-r from-purple-700 to-blue-900 bg-opacity-75"
      
@@ -65,5 +69,6 @@ export default function Parent() {
       </div>
       <Footer />
     </>
+  </Provider>
   );
 }

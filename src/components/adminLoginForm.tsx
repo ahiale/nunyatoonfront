@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 
-export default function 
-LoginForm() {
+export default function AdminLoginForm() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // State for error messages
@@ -29,12 +28,19 @@ LoginForm() {
                 body: JSON.stringify(rawFormData)
             });
             const data = await res.json();
-            // console.log(data)
             
             if (res.ok && data) {
-                Cookies.set('token', data[1]); // Ensure 'token' is the correct key
-                localStorage.setItem("token&Id", JSON.stringify(data));
-                router.push('/profil');
+                // Assuming the admin's email and password are hardcoded or retrieved from a secure place
+                const adminEmail = 'lieben@gmail.com'; // Replace with the actual admin email
+                const adminPassword = 'lieben228'; // Replace with the actual admin password
+
+                if (rawFormData.email === adminEmail && rawFormData.password === adminPassword) {
+                    Cookies.set('token', data[1]); // Ensure 'token' is the correct key
+                    localStorage.setItem("token&Id", JSON.stringify(data));
+                    router.push('/admin'); // Redirect to admin page
+                } else {
+                    setError("Email ou mot de passe invalide."); // Set error message
+                }
             } else {
                 setError("Email ou mot de passe invalide."); // Set error message
             }

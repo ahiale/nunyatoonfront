@@ -6,6 +6,10 @@ import Cookies from "js-cookie";
 import Modal from "react-modal";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
+import { useDispatch } from "react-redux";
+import { updateEnfantState, updateVideoState } from "@/store/slice";
 
 interface Profile {
   nom: string;
@@ -20,6 +24,16 @@ interface Profile {
   nbre_profil: number | null;
   maxProfilEnfant: number;
   children: any[];
+}
+ 
+interface enfant{
+  id: string;
+  pseudo: string;
+  image: string;
+  age: number;
+  code_pin: string;
+  historique_video:[];
+  parent_id: string;
 }
 
 const defaultProfile: Profile = {
@@ -64,7 +78,8 @@ const ParentCard: React.FC<Profile> = ({
   };
 
   return (
-    <div className="relative flex flex-col items-center space-y-2 transition-transform transform hover:scale-105 duration-300">
+    <Provider store={store}>
+      <div className="relative flex flex-col items-center space-y-2 transition-transform transform hover:scale-105 duration-300">
       <div
         className={`w-32 h-32 lg:w-48 lg:h-48 rounded-md overflow-hidden flex items-center justify-center cursor-pointer`}
         onClick={openModal}
@@ -106,6 +121,7 @@ const ParentCard: React.FC<Profile> = ({
         </div>
       </Modal>
     </div>
+    </Provider>
   );
 };
 
@@ -113,7 +129,7 @@ const EnfantCard: React.FC<{ pseudo: string; image: string; codePin: string }> =
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [inputCode, setInputCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
+ const dispatch = useDispatch
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -123,9 +139,11 @@ const EnfantCard: React.FC<{ pseudo: string; image: string; codePin: string }> =
     setErrorMessage("");
     setInputCode("");
   };
-
-  const handleCodeSubmit = () => {
+  const handleCodeSubmit = (enf:enfant) => {
+    
     if (inputCode === codePin) {
+      // dispatch(updateVideoState(v));
+     
       window.location.href = "/enfant"; // Replace with actual child platform URL
     } else {
       setErrorMessage("Code PIN erroné. Veuillez réessayer.");
@@ -161,7 +179,10 @@ const EnfantCard: React.FC<{ pseudo: string; image: string; codePin: string }> =
         {errorMessage && <div className="text-red-500 mb-4">{errorMessage}</div>}
         <div className="flex">
           <button
-            onClick={handleCodeSubmit}
+            onClick={(e) => {
+              // e.preventDefault(); // Si vous souhaitez empêcher le comportement par défaut
+              handleCodeSubmit
+            }}
             className="bg-purple-600 text-white p-2 rounded mr-2"
           >
             <FaCheckCircle className="h-6 w-6" />
@@ -203,6 +224,7 @@ const Profiles: React.FC = () => {
           if (response.ok) {
             const data = await response.json();
             const responseParent = data;
+            console.log("responseParent", responseParent);
             localStorage.setItem("connectedUser", JSON.stringify(responseParent));
             setProfile(responseParent);
           } else {
@@ -229,6 +251,7 @@ const Profiles: React.FC = () => {
       const parent = localStorage.getItem("connectedUser");
       if (parent) {
         const parentJSON = JSON.parse(parent);
+        console.log("parentJSON", parentJSON);
         const connectedParent = await fetch(
           `http://127.0.0.1:8000/parent/get/${parentJSON.id}`,
           {
@@ -240,6 +263,8 @@ const Profiles: React.FC = () => {
           }
         );
         const enfantsToJson = await enfants.json();
+        console.log("enfantsToJson", enfantsToJson);
+
         const connectedParentJson = await connectedParent.json();
         const parentWithChildren = {
           ...connectedParentJson,
@@ -256,7 +281,8 @@ const Profiles: React.FC = () => {
   }, []);
 
   return (
-    <div
+    <Provider store={store}>
+      <div
       className="flex flex-col items-center justify-center space-y-8 p-8 font-Grandstander w-screen h-screen bg-cover bg-center"
       style={{ backgroundImage: 'url(/images/fondBleuNuit.jpg)' }}
     >
@@ -321,6 +347,7 @@ const Profiles: React.FC = () => {
         )}
       </div>
     </div>
+    </Provider>
   );
 };
 

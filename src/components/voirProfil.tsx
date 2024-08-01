@@ -1,15 +1,16 @@
 
 import React, { useEffect, useState } from 'react';
+import { Profile } from '../../type';
 
-interface Profile {
-    pseudo?: string;
-    image?: string;
-    editPseudo?: string;
-    editImage?: string;
-    id?: string;
-    age?: string;
-    code_pin?: string;
-}
+// interface Profile {
+//     pseudo?: string;
+//     image?: string;
+//     editPseudo?: string;
+//     editImage?: string;
+//     id?: string;
+//     age?: string;
+//     code_pin?: string;
+// }
 
 interface TempsEcran {
     joursA?: string;

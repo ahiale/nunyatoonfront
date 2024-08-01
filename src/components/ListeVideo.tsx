@@ -2,6 +2,11 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { Provider, useDispatch, UseDispatch } from "react-redux";
+import { updateVideoState } from "@/store/slice";
+import { RootState, store } from "@/store/store";
+import { useSelector } from "react-redux";
+
 
 interface Categorie {
   id: string;
@@ -15,10 +20,26 @@ interface Video {
   description: string;
   url: string;
   duree: string;
+  couverture: string;
 }
 
 export default function ListeVideo() {
   const [categories, setCategories] = useState<Categorie[]>([]);
+ const dispatch = useDispatch()
+
+ const videoData = useSelector(
+  (state:RootState) => state.AppStates.videoState
+)
+  const viewVideo = (v:Video) =>{
+    
+    dispatch(updateVideoState(v));
+  
+    // Assurez-vous que la mise à jour de l'état a bien eu lieu avant de naviguer
+    setTimeout(() => {
+      console.log(videoData); // Vérifiez l'état mis à jour
+      // window.location.href = "/video";
+    }, 0);
+  }
 
   useEffect(() => {
     const fetchallCategories = async () => {
@@ -47,7 +68,8 @@ export default function ListeVideo() {
   }, []);
 
   return (
-    <div className="p-8 min-h-screen py-8 font-Grandstander text-white">
+    <Provider store={store}>
+<div className="p-8 min-h-screen py-8 font-Grandstander text-white">
       <div className="flex space-x-2 overflow-x-auto p-4 rounded-lg mt-5 shadow-lg mx-10">
         {categories.map((category, index) => (
           <div
@@ -74,12 +96,16 @@ export default function ListeVideo() {
                   key={index}
                   className="flex-shrink-0 w-60 rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500 bg-orange-300 hover:bg-orange-400 cursor-pointer"
                 >
-                  <Link href={video.url}>
+                  <Link href="/video" onClick={(e) => {
+                      // e.preventDefault(); // Si vous souhaitez empêcher le comportement par défaut
+                      viewVideo(video);
+                    }}>
                     <img
-                      className="w-full"
-                      src="/images/imageCartoon.jpeg"
-                      alt={video.titre}
-                    />
+                        className="w-full"
+                        src={video.couverture}
+                        alt={video.titre}
+                      />
+                    
                   </Link>
                 </div>
               ))}
@@ -104,5 +130,6 @@ export default function ListeVideo() {
         </div>
       ))}
     </div>
+    </Provider>
   );
 }

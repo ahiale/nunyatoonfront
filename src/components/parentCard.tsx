@@ -1,21 +1,17 @@
-// components/EnfantCard.tsx
+// components/ParentCard.tsx
 import React, { useState } from "react";
 import Modal from "react-modal";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { updateEnfantState } from "@/store/slice";
 
-interface EnfantCardProps {
-  pseudo: string;
-  image: string;
-  codePin: string;
+interface ParentCardProps {
+  nom: string;
+  codeParental: string;
 }
 
-const EnfantCard: React.FC<EnfantCardProps> = ({ pseudo, image, codePin }) => {
+const ParentCard: React.FC<ParentCardProps> = ({ nom, codeParental }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [inputCode, setInputCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const dispatch = useDispatch();
 
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => {
@@ -25,35 +21,34 @@ const EnfantCard: React.FC<EnfantCardProps> = ({ pseudo, image, codePin }) => {
   };
 
   const handleCodeSubmit = () => {
-    if (inputCode === codePin) {
-    //   dispatch(updateEnfantState({ enf}));
-      window.location.href = "/enfant"; // Replace with actual child platform URL
+    if (inputCode === codeParental) {
+      window.location.href = "/parent"; // Replace with actual parent interface URL
     } else {
-      setErrorMessage("Code PIN erroné. Veuillez réessayer.");
+      setErrorMessage("Code parental erroné. Veuillez réessayer.");
     }
   };
 
   return (
     <div className="relative flex flex-col items-center space-y-2 transition-transform transform hover:scale-105 duration-300">
       <div
-        className="w-20 h-20 lg:w-28 lg:h-28 rounded-md overflow-hidden flex items-center justify-center cursor-pointer"
+        className="w-32 h-32 lg:w-48 lg:h-48 rounded-md overflow-hidden flex items-center justify-center cursor-pointer"
         onClick={openModal}
       >
         <img
-          src={image ? image : "/images/imageParDeafaut.jpeg"}
+          src="/images/imageParDeafaut.jpeg"
           className="w-full h-full object-cover"
-          alt={`Profile image of ${pseudo}`}
+          alt={`Profile image of ${nom}`}
         />
       </div>
-      <div className="text-white font-semibold">Enfant : {pseudo}</div>
+      <div className="text-white font-semibold">Parent : {nom}</div>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        contentLabel="Code PIN"
+        contentLabel="Code Parental"
         className="flex flex-col items-center bg-gray-100 p-4 rounded shadow-lg max-w-md text-black border-2 border-purple-500"
         overlayClassName="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center"
       >
-        <h2 className="text-lg text-black font-semibold mb-4">Entrer le code PIN</h2>
+        <h2 className="text-lg text-black font-semibold mb-4">Entrer le code parental</h2>
         <input
           type="password"
           value={inputCode}
@@ -80,4 +75,4 @@ const EnfantCard: React.FC<EnfantCardProps> = ({ pseudo, image, codePin }) => {
   );
 };
 
-export default EnfantCard;
+export default ParentCard;

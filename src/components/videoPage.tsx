@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { Provider, useSelector } from "react-redux";
+import { RootState, store } from "@/store/store";
 export default function VideoPage() {
   const [liked, setLiked] = useState(false);
 
@@ -8,8 +9,21 @@ export default function VideoPage() {
     setLiked(!liked);
   };
 
+  const videoData = useSelector(
+    (state:RootState) => state.AppStates.videoState
+  )
+
+  useEffect(() => {
+  if (videoData){
+    {console.log(videoData)}
+  }
+}, [videoData]);
+
+
+
   return (
-    <div
+    <Provider store={store}>
+      <div
       className="min-h-screen bg-cover bg-center"
       style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
     >
@@ -34,21 +48,18 @@ export default function VideoPage() {
               <video
                 controls
                 className="rounded-lg shadow-lg w-full h-96 object-cover"
-                src="http://127.0.0.1:8000/media/videoBanner.mp4"
+                src={videoData.url}
               >
                 Your browser does not support the video tag.
               </video>
             </div>
             <div className="m-2 font-Grandstander mt-4">
               <div className="text-white font-bold text-2xl">
-                <span className="font-bold text-black">Titre :</span> les
-                aventures de Lya
+                <span className="font-bold text-black">Titre :</span> {videoData.titre}
               </div>
               <p className="text-white">
                 <span className="font-bold text-black">Description :</span>{" "}
-                C'est l'histoire d'une jeune fille du nom de Lya qui vivait dans
-                la forêt, elle vivait des aventures incroyables dans la forêt
-                avec les animaux.
+                {videoData.description}
               </p>
             </div>{" "}
             <br></br> <br></br>
@@ -76,5 +87,6 @@ export default function VideoPage() {
         </div>
       </div>
     </div>
+    </Provider>
   );
 }
