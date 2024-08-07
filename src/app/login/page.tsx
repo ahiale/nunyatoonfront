@@ -1,11 +1,15 @@
+"use client";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import LoginForm from "@/components/loginForm";
 import { redirect } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
 
 const Login = () => {
   return (
+    <Provider store={store}>
     <div
       className="flex justify-center items-center h-screen font-Grandstander"
       style={{
@@ -51,6 +55,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </Provider>
   );
 };
 

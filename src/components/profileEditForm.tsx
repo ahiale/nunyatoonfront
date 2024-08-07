@@ -12,7 +12,7 @@ type ProfileEditFormProps = {
 const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, initialProfile }) => {
   const [editPseudo, setEditPseudo] = useState(initialProfile?.pseudo || '');
   const [editImage, setEditImage] = useState(initialProfile?.image || '');
-  const [editAge, setEditAge] = useState(initialProfile?.age || '');
+  const [editAge, setEditAge] = useState(initialProfile?.age || 0);
   const [editPin, setEditPin] = useState(initialProfile?.code_pin || '');
   const [editDays, setEditDays] = useState<string[]>([]);
   const [editStartTime, setEditStartTime] = useState('');
@@ -106,14 +106,18 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newAge = e.target.value;
-    if (+newAge < 5 || +newAge > 14) {
+    const value = e.target.value;
+    const numericValue = value === '' ? 0 : Number(value); // Convert to number or use 0 if empty
+
+    if (numericValue < 5 || numericValue > 14) {
       setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
     } else {
       setErrorMessage('');
     }
-    setEditAge(newAge);
+
+    setEditAge(numericValue);
   };
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">

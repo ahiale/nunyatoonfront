@@ -1,14 +1,17 @@
 "use client";
 import { redirect } from 'next/navigation';
 import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation';
 
 function LogoutButton() {
+    const router=useRouter()
     const handleLogout=() =>{
-        Cookies.remove('token');
-        redirect(`/home`) // Navigate to the new post page
+        localStorage.removeItem('token&Id');
+        localStorage.removeItem('connectedUser')
+        router.push('/home');
     }
     return (
-        <button className="text-black hover:underline" onClick={handleLogout}>Log Out</button>
+        <button className="text-black font-bold hover:text-white transition-transform duration-300 ease-in-out transform hover:scale-110 focus:outline-none" onClick={handleLogout}> Deconnexion </button>
     )
 }
 export default LogoutButton;

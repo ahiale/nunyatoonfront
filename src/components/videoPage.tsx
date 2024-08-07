@@ -12,13 +12,40 @@ export default function VideoPage() {
   const videoData = useSelector(
     (state:RootState) => state.AppStates.videoState
   )
+  const enfantData = useSelector(
+    (state:RootState) => state.AppStates.enfantState
+  )
 
   useEffect(() => {
-  if (videoData){
-    {console.log(videoData)}
-  }
-}, [videoData]);
+    console.log(enfantData)
+    console.log(videoData)
+    if (videoData && enfantData && videoData.id && enfantData.id) {
+      console.log(videoData);
+      console.log(enfantData);
 
+      const consulterVideo = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/video/${videoData.id}/${enfantData.id}/consulter`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Erreur lors de la consultation de la vidéo: ${response.statusText}`);
+          }
+
+          const result = await response.json();
+          console.log("Consultation réussie:", result);
+        } catch (error) {
+          console.error("Erreur lors de la consultation de la vidéo:", error);
+        }
+      };
+
+      consulterVideo();
+    }
+  }, [videoData, enfantData]);
 
 
   return (

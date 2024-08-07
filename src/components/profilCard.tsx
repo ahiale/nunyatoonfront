@@ -1,31 +1,47 @@
+"use client";
+import { updateEnfantState } from '@/store/slice';
+import Link from 'next/link';
 import { useState } from 'react';
 import { FaEllipsisV, FaEdit, FaTrash, FaHistory } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
 
 type ProfileCardProps = {
-  pseudo: string;
-  image: string;
+  enfant:ProfilEnfant
   onEdit: () => void;
   onDelete: () => void;
   onHistory: () => void;
   readProfile: () => void;
 };
 
-const ProfileCard: React.FC<ProfileCardProps> = ({
-  pseudo = 'Pseudo Inconnu',
-  image = '/path/to/default/image.jpg',
-  onEdit,
-  onDelete,
-  onHistory,
-  readProfile
-}) => {
+interface ProfilEnfant {
+  id?: string;
+  pseudo?: string;
+  image?: string;
+  age?: number;
+  code_pin?: string;
+  historique_video?:[];
+  parent_id?: string;
+}
+
+interface ProfileCard{
+  enfant: ProfilEnfant
+}
+
+
+const ProfileCard: React.FC<ProfileCardProps> = ({enfant, onDelete, onEdit,readProfile  }) => {
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const dispactch= useDispatch();
+  
+  const voirHistorique=(enfant:ProfilEnfant)=>{
+    dispactch(updateEnfantState(enfant))
+  }
 
   return (
     <div className="relative bg-white p-4 rounded-lg shadow-md">
       <div className="flex items-center space-x-4" onClick={() => setShowOptions(!showOptions)}>
-        <img src={image} alt={`${pseudo} Profile`} className="w-16 h-16 rounded-full object-cover" />
+        <img src={enfant.image} alt={`${enfant.pseudo} Profile`} className="w-16 h-16 rounded-full object-cover" />
         <div>
-          <h3 className="text-black text-lg">{pseudo}</h3>
+          <h3 className="text-black text-lg">{enfant.pseudo}</h3>
         </div>
         <FaEllipsisV className="text-black cursor-pointer ml-auto" />
       </div>
@@ -49,12 +65,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           >
             <FaTrash className="mr-2" /> Supprimer
           </button>
-          <button
-            onClick={onHistory}
+          <Link href="/historique"
+            onClick={(e) => {
+              // e.preventDefault(); 
+              voirHistorique(enfant);
+            }}
             className="block px-4 py-2 text-black hover:bg-purple-700 w-full text-left flex items-center"
           >
             <FaHistory className="mr-2" /> Historique
-          </button>
+          </Link>
         </div>
       )}
     </div>

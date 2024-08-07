@@ -1,3 +1,4 @@
+"use client";
 import Banner from "@/components/Banner";
 import Contenu from "@/components/Contenu";
 import Navbar from "@/components/Navbar";

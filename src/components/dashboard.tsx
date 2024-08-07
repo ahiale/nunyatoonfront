@@ -179,8 +179,10 @@ const Dashboard: React.FC = () => {
             {readenfant?.map((profile, index) => (
               <ProfileCard
                 key={index}
-                pseudo={profile?.pseudo || 'Pseudo Inconnu'}
-                image={profile?.image || '/path/to/default/image.jpg'}
+                // id={profile?.id || 'zero'}
+                // pseudo={profile?.pseudo || 'Pseudo Inconnu'}
+                // image={profile?.image || '/path/to/default/image.jpg'}
+                enfant={profile}
                 onEdit={() => openEditForm(profile)}
                 onDelete={() => openDeleteConfirm(profile)}
                 readProfile={() => openReadProfile(profile)}

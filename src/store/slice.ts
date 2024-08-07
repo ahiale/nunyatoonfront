@@ -1,17 +1,14 @@
 import {PayloadAction, createSlice} from "@reduxjs/toolkit";
 
 
-
-
-
 interface EnfantState{
-    id: string,
-    age: number,
-    historique_video:[],
-    pseudo:string,
-    image: string,
-    code_pin: string,
-    parent_id: string,
+    id?: string,
+    age?: number,
+    historique_video?:[],
+    pseudo?:string,
+    image?: string,
+    code_pin?: string,
+    parent_id?: string,
 }
 
 // id: string;
@@ -23,32 +20,36 @@ interface EnfantState{
 //     parent_id: string;
 
 interface ParentState{
-    idParent: string,
-    nomParent:string,
-    ageParent: number,
-    historique_videoParent:[],
-    motDePasseParent:string,
-    contactParent:string,
-    paysParent:string,
-    emailParent:string,
-    codeParentalEnfant: string,
+    id: string,
+    nom:string,
+    age: number,
+    historique_video:[],
+    motDePasse:string,
+    contact:string,
+    pays:string,
+    email:string,
+    codeParental: string,
 }
 
 interface VideoState{
+    
     id: string,
     titre:string,
     description:string,
     url:string,
     duree:string,
     couverture:string,
+    type_source:number,
 }
-
 
 
 interface AppState{
     enfantState:EnfantState,
     parentState:ParentState,
-    videoState:VideoState
+    videoState:VideoState,
+    searchState:string,
+    
+    
 }
 
 const initialState: AppState ={
@@ -64,15 +65,15 @@ const initialState: AppState ={
     },
 
     parentState :{
-        idParent: "",
-        nomParent:"",
-        ageParent: 0,
-        historique_videoParent:[],
-        motDePasseParent:"",
-        contactParent:"",
-        paysParent:"",
-        emailParent:"",
-        codeParentalEnfant: "",
+        id: "",
+        nom:"",
+        age: 0,
+        historique_video:[],
+        motDePasse:"",
+        contact:"",
+        pays:"",
+        email:"",
+        codeParental: "",
     },
 
     videoState :{
@@ -82,7 +83,10 @@ const initialState: AppState ={
         couverture:"",
         url:"",
         duree:"",
+        type_source:0,
     },
+    searchState:'',
+    
 
 };
 
@@ -94,9 +98,8 @@ export const AppStateSlice = createSlice({
             state.enfantState=action.payload;
             return state;
         },
-        // updateEnfantState(state, action: PayloadAction<EnfantState>) {
-        //     return { ...state, ...action.payload };
-        //   },
+
+        
         updateParentState:(state:AppState, action: PayloadAction<ParentState>)=>{
             state.parentState=action.payload;
             return state;
@@ -105,11 +108,16 @@ export const AppStateSlice = createSlice({
             state.videoState=action.payload;
             return state;
         },
+
+        updateSearchState:(state:AppState, action: PayloadAction<string>)=>{
+            state.searchState=action.payload;
+            return state;
+        },
     },
 
 });
 
-export const{ updateEnfantState, updateParentState, updateVideoState}= AppStateSlice.actions;
+export const{ updateEnfantState, updateParentState, updateVideoState, updateSearchState}= AppStateSlice.actions;
 export default AppStateSlice.reducer;
 
 

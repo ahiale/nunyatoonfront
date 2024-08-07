@@ -1,97 +1,141 @@
-// pages/Profiles.tsx
 "use client";
-import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import Navbar from "@/components/Navbar";
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import { Provider, useSelector } from 'react-redux';
 
-import { Provider } from "react-redux";
-import { store } from "@/store/store";
-import EnfantCard from "./enfantCard";
-import ParentCard from "./parentCard";
+import Navbar from './Navbar';
+import { RootState, store } from '@/store/store';
+
+import EnfantCard from './enfantCard';
+import ParentCard from './parentCard';
+import { useDispatch } from 'react-redux';
+import { updateParentState } from '@/store/slice';
+import LogoutButton from './LogoutButton';
+
 
 interface Profile {
-  nom: string;
   id: string;
-  motDePasse: string;
-  contact: string | null;
-  codeParental: string;
-  historique_video: string[] | null;
+  nom: string;
   age: number;
+  motDePasse: string;
   pays: string;
+  contact: string;
   email: string;
-  nbre_profil: number | null;
-  maxProfilEnfant: number;
-  children: any[];
+  codeParental: string;
+  historique_video:[];
+  children: Enfant[];
+}
+
+interface Enfant {
+  id: string;
+  pseudo: string;
+  image: string;
+  age: number;
+  code_pin: string;
+  historique_video:[];
+  parent_id: string;
 }
 
 const defaultProfile: Profile = {
-  nom: "kodjqq",
-  id: "169d1be6-4b20-4a45-9830-0b6be9",
-  motDePasse: "$pbkdf2-sha256$29000$2jtnrDXmvNfae6815nzv3Q$ynG7joT8Rz10Ir8EOlRLrik71mHJIrSntue/fH1o2tc",
-  contact: null,
-  codeParental: "5678",
-  historique_video: null,
-  age: 30,
-  pays: "Benin",
-  email: "koda@gmail.com",
-  nbre_profil: null,
-  maxProfilEnfant: 3,
-  children: [],
+  id: '',
+  nom: '',
+  age: 0,
+  motDePasse: '',
+  pays: '',
+  contact: '',
+  email: '',
+  codeParental: '',
+  historique_video: [],
+  children: []
 };
 
 const Profiles: React.FC = () => {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [parentWithChildren, setParentWithTheirChildren] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchParentData = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (token) {
-          const tokenPayload = token.split(".")[1];
-          const decodedPayload = JSON.parse(atob(tokenPayload));
-          const userId = decodedPayload.user_id;
-          const response = await fetch(`http://127.0.0.1:8000/parents/${userId}/with-children`);
-          if (!response.ok) {
-            throw new Error("Failed to fetch parent data");
-          }
-          const data = await response.json();
-          setParentWithTheirChildren([data]);
-        } else {
-          console.error("No token found in cookies.");
-        }
-      } catch (error) {
-        console.error("Error fetching parent data:", error);
+  const dispatch = useDispatch()
+ 
+  const parentData = useSelector(
+    (state:RootState) => state.AppStates.parentState
+  )
+ 
+  const fetchParentWithTheirChildrenData = async () => {
+    const enfants = await fetch(
+      `http://127.0.0.1:8000/enfant/read_all_enfants`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
-    };
+    );
+    const parent = localStorage.getItem("connectedUser");
+    if (parent) {
+      const parentJSON = JSON.parse(parent);
+      // console.log("parentJSON", parentJSON);
+      setProfile(parentJSON)
+      // console.log("profileeee",profile)
+    
+      // const connectedParent = await fetch(
+      //   `http://127.0.0.1:8000/parent/get/${parentJSON.id}`,
+      //   {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       "Access-Control-Allow-Origin": "*"
+      //     },
+      //   }
+      // );
+      // setProfile(parentJSON)
+      // console.log("parent etat2",parentJSON)
+      // console.log("parent etat3",profile)
+      // console.log("parent etat4",parentData)
+      // console.log(parentJSON)
+      const enfantsToJson = await enfants.json();
+      // console.log("enfantsToJson", enfantsToJson);
 
-    fetchParentData();
+      // const connectedParentJson = await connectedParent.json();
+      const parentWithChildren = {
+        ...parentData,
+        children: enfantsToJson.filter(
+          (enfant: { parent_id: string }) => enfant.parent_id === parentData.id
+        ),
+      };
+      setParentWithTheirChildren([parentWithChildren]);
+
+    }
+  };
+  useEffect(() => {
+    
+    fetchParentWithTheirChildrenData();
   }, []);
 
+  
+  
   return (
     <Provider store={store}>
-      <div className="min-h-screen bg-gray-800">
-        <Navbar />
-        <div className="text-center text-white py-8">
-          <h1 className="text-3xl lg:text-4xl font-bold mb-6">Gestion de Profils</h1>
-          <div className="flex justify-center">
-            {parentWithChildren.map((parent: any) => (
-              <div key={parent.id} className="space-y-4">
-                <ParentCard nom={parent.nom} codeParental={parent.codeParental} />
-                <div className="flex space-x-4">
-                  {parent.children.map((child: any) => (
-                    <EnfantCard
-                      key={child.id}
-                      pseudo={child.pseudo}
-                      image={child.image_profil}
-                      codePin={child.code_pin}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+      <div
+      className="flex flex-col items-center justify-center space-y-8 p-8 font-Grandstander w-screen h-screen bg-cover bg-center"
+      style={{ backgroundImage: 'url(/images/fondBleuNuit.jpg)' }}
+    >
+        <div className="absolute top-5 left-0 w-full">
+        <LogoutButton/>
+          <Navbar />
         </div>
+     
+        <h1 className="text-5xl lg:text-5xl font-bold text-white mb-8">
+          Quel est votre profil?
+        </h1>
+        <div className="flex space-x-4 lg:space-x-8">
+        <ParentCard profile={profile} />
+        {parentWithChildren.map(
+          (parent: { children: Enfant[] }, index: React.Key | null | undefined) =>
+            parent.children.map(
+              (enfant: Enfant, enfantIndex: React.Key | null | undefined) => (
+                <EnfantCard key={enfant.id} enfant={enfant} />
+              )
+            )
+        )}
+      </div>
       </div>
     </Provider>
   );

@@ -4,6 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock, FaPhone, FaUser, FaKey, FaGlobe } from 'react-icons/fa';
 
+// Déclaration des indicatifs téléphoniques par pays
+const countryCodes: Record<string, string> = {
+    Togo: "228",
+    Benin: "229",
+    Ghana: "233",
+};
 
 export default function RegisterForm() {
     const [nom, setNom] = useState('');
@@ -13,36 +19,42 @@ export default function RegisterForm() {
     const [pays, setPays] = useState('');
     const [motDePasse, setMotDePasse] = useState('');
     const [codeParental, setCodeParental] = useState('');
+    const [contactError, setContactError] = useState('');
     const router = useRouter();
 
-    const handleSubmit = async (event: any) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-    
-        const formData = new FormData(event.target);
+
+        // Vérification de la validité du numéro de contact
+        const contactRegex = /^[0-9]{8,15}$/; // Modifier selon les exigences spécifiques du format
+        if (!contactRegex.test(contact)) {
+            setContactError("Le numéro de contact est invalide.");
+            return;
+        }
+
+        setContactError(""); // Réinitialiser le message d'erreur
+
+        const formData = new FormData(event.target as HTMLFormElement);
         const rawFormData = {
             nom: formData.get('nom'),
-            age: formData.get('age'), 
+            age: formData.get('age'),
             email: formData.get('email'),
             contact: formData.get('contact') || null, // Envoyer null si vide
             pays: formData.get('pays'),
             motDePasse: formData.get('motDePasse'),
             codeParental: formData.get('codeParental') || null, // Envoyer null si vide
-          };
+        };
         console.log(JSON.stringify(rawFormData));
-        
-    
+
         try {
-            console.log("1");
             const res = await fetch('http://localhost:8000/parent/create', {
                 method: 'POST',
                 headers: {
-                'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(rawFormData)
             });
-            console.log(res);
-            
-            console.log("2")
+
             if (res.ok) {
                 const data = await res.json();
                 console.log(data);
@@ -51,18 +63,14 @@ export default function RegisterForm() {
                 throw new Error("Response not ok");
             }
         } catch (error) {
-            alert("Login error: " + error);
+            alert("Registration error: " + error);
             console.log(error);
         }
-      };
-    
-    
-    
+    };
+
     return (
         <div>
-
-
-<form onSubmit={handleSubmit} className="">
+            <form onSubmit={handleSubmit} className="">
                 <div className="flex mb-4">
                     <div className="w-1/2 pr-2 relative">
                         <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -98,7 +106,7 @@ export default function RegisterForm() {
                             type="email"
                             id="email"
                             name="email"
-                           className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -106,17 +114,21 @@ export default function RegisterForm() {
                         />
                     </div>
                     <div className="w-1/2 pl-2 relative">
-                        <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        <input
-                            type="text"
-                            id="contact"
-                            name="contact"
-                          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
-                            placeholder="Contact"
-                            value={contact}
-                            onChange={(e) => setContact(e.target.value)}
-                            required
-                        />
+                        <FaPhone className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <div className="flex items-center">
+                            <span className="px-4 py-2 border rounded-l-md bg-gray-200 text-gray-700">{countryCodes[pays] || "+"}</span>
+                            <input
+                                type="text"
+                                id="contact"
+                                name="contact"
+                                className="w-full px-4 py-2 border rounded-r-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                placeholder="Numéro de téléphone"
+                                value={contact}
+                                onChange={(e) => setContact(e.target.value)}
+                                required
+                            />
+                        </div>
+                        {contactError && <div className="text-red-500 mt-2">{contactError}</div>}
                     </div>
                 </div>
                 <div className="mb-4 relative">
@@ -124,14 +136,12 @@ export default function RegisterForm() {
                     <select
                         id="pays"
                         name="pays"
-                        
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
-                        
                         value={pays}
                         onChange={(e) => setPays(e.target.value)}
                         required
                     >
-                        <option value=""></option>
+                        <option value="">Sélectionner un pays</option>
                         <option value="Togo">Togo</option>
                         <option value="Benin">Benin</option>
                         <option value="Ghana">Ghana</option>
@@ -143,7 +153,7 @@ export default function RegisterForm() {
                         type="password"
                         id="motDePasse"
                         name="motDePasse"
-                      className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
                         placeholder="Mot de passe"
                         value={motDePasse}
                         onChange={(e) => setMotDePasse(e.target.value)}
@@ -156,7 +166,7 @@ export default function RegisterForm() {
                         type="text"
                         id="codeParental"
                         name="codeParental"
-                       className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
                         placeholder="Code Parental"
                         value={codeParental}
                         onChange={(e) => setCodeParental(e.target.value)}

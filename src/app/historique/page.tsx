@@ -1,5 +1,8 @@
+"use client";
 import Footer from "@/components/Footer";
 import HistoriqueComponent from "@/components/historiqueComponent";
+import { store } from "@/store/store";
+import { Provider } from "react-redux";
 
 const videoList = [
   {
@@ -28,11 +31,14 @@ const videoList = [
 
 export default function Historique() {
   return (
+    <Provider store={store}>
 <div>
     <div>
       <HistoriqueComponent></HistoriqueComponent>
     </div>
+    <Footer />
       </div>
+      </Provider>
    
       
     

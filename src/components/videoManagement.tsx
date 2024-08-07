@@ -89,7 +89,7 @@ const VideoManagement = () => {
           <tr>
             <th className="px-4 py-2">Titre</th>
             <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">Type</th>
+            <th className="px-4 py-2">source</th>
             <th className="px-4 py-2">Catégorie</th>
             <th className="px-4 py-2">Actions</th>
           </tr>
@@ -104,7 +104,7 @@ const VideoManagement = () => {
                 <div>{video.description}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-black">
-                <div>{video.type_video === 1 ? "Film" : "Série"}</div>
+                <div>{video.type_video === 1 ? "youtube" : "Série"}</div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-black">
                 <div>{video.categories[0]?.titre || "N/A"}</div>

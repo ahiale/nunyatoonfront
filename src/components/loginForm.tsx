@@ -3,6 +3,10 @@ import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { updateParentState } from '@/store/slice';
+import { Provider } from 'react-redux';
+import { store } from '@/store/store';
 
 export default function 
 LoginForm() {
@@ -10,7 +14,7 @@ LoginForm() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // State for error messages
     const router = useRouter();
-
+    const dispatch = useDispatch()
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     
@@ -29,11 +33,23 @@ LoginForm() {
                 body: JSON.stringify(rawFormData)
             });
             const data = await res.json();
-            // console.log(data)
+            console.log(data)
             
             if (res.ok && data) {
                 Cookies.set('token', data[1]); // Ensure 'token' is the correct key
                 localStorage.setItem("token&Id", JSON.stringify(data));
+                console.log(data[0].substring(3));
+                const res = await fetch('http://localhost:8000/parent/get/'+data[0].substring(3), {
+                    method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                const parent = await res.json();
+                console.log(parent)
+                if(res.ok){
+                    localStorage.setItem('connectedUser',JSON.stringify(parent))
+                }
                 router.push('/profil');
             } else {
                 setError("Email ou mot de passe invalide."); // Set error message
@@ -47,6 +63,7 @@ LoginForm() {
     };
 
     return (
+        <Provider store={store}>
         <form onSubmit={handleSubmit} className="login-form text-black">
             <div className="mb-4 relative">
                 <input
@@ -77,5 +94,6 @@ LoginForm() {
             {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error message */}
             <button type="submit" className="bg-purple-600 hover:bg-purple-800 text-white font-semibold rounded-md py-2 px-4 w-full">Connexion</button>
         </form>
+        </Provider>
     );
 }

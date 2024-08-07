@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faVideo, faSignOutAlt, faListAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faVideo, faSignOutAlt, faListAlt, faChartBar, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 interface SidebarProps {
   setSection: React.Dispatch<React.SetStateAction<string>>;
@@ -41,6 +41,20 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
           >
             <FontAwesomeIcon icon={faListAlt} className="mr-2" />
             Catégories
+          </button>
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-blue-700 flex items-center text-black"
+            onClick={() => setSection('statistics')}
+          >
+            <FontAwesomeIcon icon={faChartBar} className="mr-2" />
+             users Statistiques
+          </button>
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-blue-700 flex items-center text-black"
+            onClick={() => setSection('videoStatistics')}
+          >
+            <FontAwesomeIcon icon={faChartLine} className="mr-2" />
+            Video Statistiques
           </button>
         </nav>
       </div>
