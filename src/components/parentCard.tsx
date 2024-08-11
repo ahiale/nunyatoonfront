@@ -50,6 +50,8 @@ const ParentCard: React.FC<ParentCardProps> = ({ profile }) => {
   };
 
   const parentData = useSelector((state: RootState) => state.AppStates.parentState);
+  console.log(profile)
+  console.log(parentData)
 
   const handleCodeSubmit = (pro: Profile, e: React.MouseEvent) => {
     if (inputCode === profile.codeParental) {
@@ -60,6 +62,7 @@ const ParentCard: React.FC<ParentCardProps> = ({ profile }) => {
       setErrorMessage("Code Parental erroné. Veuillez réessayer.");
     }
   };
+  console.log(profile)
 
   return (
     <Provider store={store}>

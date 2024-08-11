@@ -3,7 +3,7 @@ import { RootState, store } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaHistory, FaPlay, FaSearch } from "react-icons/fa";
+import { FaArrowLeft, FaHistory, FaPlay, FaSearch } from "react-icons/fa";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
 const HeroSectionContainer = () => {
@@ -44,6 +44,12 @@ const HeroSectionContainer = () => {
       <div className="px-2">
         {/* Add horizontal padding */}
         <div className="p-8 flex flex-col items-center font-Grandstander">
+          {/* Back button */}
+      <div className="absolute top-4 left-4">
+        <Link href="/profil" className="text-white text-2xl">
+          <FaArrowLeft />
+        </Link>
+      </div>
           {/* Hero Section */}
           <div className="flex justify-between items-center w-full max-w-screen-lg">
             <div className="flex items-center space-x-4">

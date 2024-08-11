@@ -40,6 +40,7 @@ interface VideoState{
     duree:string,
     couverture:string,
     type_source:number,
+    nbre_like:number,
 }
 
 
@@ -84,6 +85,7 @@ const initialState: AppState ={
         url:"",
         duree:"",
         type_source:0,
+        nbre_like:0,
     },
     searchState:'',
     

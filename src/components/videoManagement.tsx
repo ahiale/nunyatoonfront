@@ -73,52 +73,50 @@ const VideoManagement = () => {
   }, []);
 
   return (
-    <div>
-      <div className='text-3xl text-black font-bold text-left mb-8 text-black'>
-        Liste des vidéos
+    <div className="font-Grandstander">
+      <div className="text-black font-bold text-3xl pb-8 pt-8">
+        Liste des videos
       </div>
       <button
-        className="mb-4 px-6 py-1 bg-purple-600  bg-opacity-25 text-black rounded-lg"
+        className="mb-4 px-6 py-1 bg-purple-600 bg-opacity-25 text-black rounded-lg"
         onClick={() => setShowForm(true)}
       >
         <span>Ajouter une vidéo</span>
       </button>
       {showForm && <VideoForm onClose={handleCloseForm} />}
-      <table className="min-w-full text-black">
-        <thead className='bg-purple-600  bg-opacity-25'>
+      <table className="min-w-full text-white">
+        <thead className='bg-purple-400'>
           <tr>
-            <th className="px-4 py-2">Titre</th>
-            <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">source</th>
-            <th className="px-4 py-2">Catégorie</th>
-            <th className="px-4 py-2">Actions</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Titre</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Catégorie</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-purple-600">
           {videos.map((video, index) => (
             <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap text-black">
+              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
                 <div>{video.titre}</div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black">
+              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
                 <div>{video.description}</div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black">
-                <div>{video.type_video === 1 ? "youtube" : "Série"}</div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black">
+              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
                 <div>{video.categories[0]?.titre || "N/A"}</div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button className="text-indigo-600 hover:text-indigo-900 mx-2">
-                  <FontAwesomeIcon icon={faEdit} title="Modifier" />
-                </button>
-                <button
-                  className="text-red-600 hover:text-red-900 mx-2"
-                  onClick={() => openConfirmationDialog(video.id)}
-                >
-                  <FontAwesomeIcon icon={faTrash} title="Supprimer" />
-                </button>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-b">
+                <div className="flex items-center justify-start space-x-2">
+                  <button className="text-indigo-600 hover:text-indigo-900">
+                    <FontAwesomeIcon icon={faEdit} title="Modifier" />
+                  </button>
+                  <button
+                    className="text-red-600 hover:text-red-900"
+                    onClick={() => openConfirmationDialog(video.id)}
+                  >
+                    <FontAwesomeIcon icon={faTrash} title="Supprimer" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
@@ -129,7 +127,7 @@ const VideoManagement = () => {
       {isDialogOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h3 className="text-lg  text-black font-semibold mb-4">Êtes-vous sûr de vouloir supprimer cette vidéo ?</h3>
+            <h3 className="text-lg text-black font-semibold mb-4">Êtes-vous sûr de vouloir supprimer cette vidéo ?</h3>
             <div className="flex justify-end space-x-4">
               <button
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg"

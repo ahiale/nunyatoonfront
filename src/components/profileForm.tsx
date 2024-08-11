@@ -22,7 +22,7 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
     };
 
     const handleSubmit = async () => {
-      onSubmit({ pseudo, image });
+     
       onClose();
 
       try {
@@ -77,6 +77,7 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
         }
 
         console.log('Enfant et temps d\'écran créés avec succès');
+        onSubmit({ pseudo, image });
       } catch (error: any) {
         console.error(error.message);
       }

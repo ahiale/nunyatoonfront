@@ -53,25 +53,35 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setVideoFile(e.target.files[0]);
-      console.log(e.target.files[0].name);  // Affiche le titre du fichier dans la console
+      console.log("Video file selected:", e.target.files[0].name); // Débogage
     }
   };
 
   const handleCouvertureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setCouverture(e.target.files[0]);
-      console.log(e.target.files[0].name);  // Affiche le titre du fichier dans la console
+      console.log("Couverture file selected:", e.target.files[0].name); // Débogage
     }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    console.log("Form submitted with values:", {
+      videoSource,
+      videoFile,
+      videoLink,
+      title,
+      description,
+      couverture,
+      category
+    }); // Débogage
+
     try {
       let videoUrl = '';
       if (videoSource === '4') {
         if (!videoFile) {
-          console.error("Aucun fichier sélectionné");
+          console.error("Aucun fichier vidéo sélectionné");
           return;
         }
 
@@ -94,7 +104,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
       }
 
       const formDataTwo = new FormData();
-      formDataTwo.append("couverture", couverture!);
+      if (couverture) formDataTwo.append("couverture", couverture);
       formDataTwo.append("titre", title);
       formDataTwo.append("description", description);
       formDataTwo.append("video_source", videoSource);
@@ -113,7 +123,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
       }
 
       const resulttwo = await responsetwo.json();
-      console.log(resulttwo); // Affiche la réponse du serveur
+      console.log(resulttwo); // Débogage
 
       onClose(); // Ferme le formulaire après la soumission
     } catch (error) {
@@ -187,27 +197,10 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
           <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
             type="file"
-            placeholder="Couverture"
+            placeholder="Couverture de la Vidéo"
             className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
             onChange={handleCouvertureChange}
-            required
           />
-        </div>
-        <div className="relative">
-          <FaTags className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <select
-            value={category}
-            onChange={handleCategoryChange}
-            className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
-            required
-          >
-            <option value="" disabled>Choisissez une catégorie</option>
-            {categories.map((category, index) => (
-              <option key={index} value={category.id}>
-                {category.titre}
-              </option>
-            ))}
-          </select>
         </div>
         <div className="relative">
           <FaInfoCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -219,12 +212,34 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-purple-600 text-white p-2 rounded-md hover:bg-purple-700"
-        >
-          Ajouter la Vidéo
-        </button>
+        <div>
+          <select
+            value={category}
+            onChange={handleCategoryChange}
+            className="mt-1 block w-full p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
+            required
+          >
+            <option value="" disabled>Choisissez une catégorie</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>{cat.titre}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex justify-between mt-4">
+          <button
+            type="button"
+            className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            onClick={onClose}
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+          >
+            Ajouter la Vidéo
+          </button>
+        </div>
       </form>
     </div>
   );

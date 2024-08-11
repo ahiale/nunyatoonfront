@@ -2,6 +2,7 @@
 import Footer from "@/components/Footer";
 import HeroSectionContainer from "@/components/heroSection";
 import ListeVideo from "@/components/ListeVideo";
+import ListeVideoParent from "@/components/listeVideoParent";
 import MovieCard from "@/components/movieCard";
 import Navbar from "@/components/Navbar";
 import { store } from "@/store/store";
@@ -28,7 +29,7 @@ export default function Parent() {
         <MovieCard></MovieCard>
       </div>
       <div className="">
-        <ListeVideo />
+        <ListeVideoParent></ListeVideoParent>
       </div>
       </div>
       </div>

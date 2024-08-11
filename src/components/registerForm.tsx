@@ -1,10 +1,8 @@
 "use client";
-import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock, FaPhone, FaUser, FaKey, FaGlobe } from 'react-icons/fa';
 
-// Déclaration des indicatifs téléphoniques par pays
 const countryCodes: Record<string, string> = {
     Togo: "228",
     Benin: "229",
@@ -20,19 +18,57 @@ export default function RegisterForm() {
     const [motDePasse, setMotDePasse] = useState('');
     const [codeParental, setCodeParental] = useState('');
     const [contactError, setContactError] = useState('');
+    const [ageError, setAgeError] = useState('');
+    const [motDePasseError, setMotDePasseError] = useState('');
+    const [motDePasseSuccess, setMotDePasseSuccess] = useState('');
+    const [codeParentalError, setCodeParentalError] = useState('');
+    const [codeParentalSuccess, setCodeParentalSuccess] = useState('');
+    const [formError, setFormError] = useState('');
+    const [serverError, setServerError] = useState('');
     const router = useRouter();
+
+    const validateAge = (value: string) => {
+        const ageValue = parseInt(value);
+        if (isNaN(ageValue) || ageValue < 18) {
+            setAgeError("Un parent doit avoir au moins 18 ans.");
+        } else {
+            setAgeError("");
+        }
+    };
+
+    const validateMotDePasse = (value: string) => {
+        const motDePasseRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+        if (!motDePasseRegex.test(value)) {
+            setMotDePasseError("Le mot de passe doit contenir au moins 8 caractères, avec des chiffres et des lettres.");
+            setMotDePasseSuccess("");
+        } else {
+            setMotDePasseError("");
+            setMotDePasseSuccess("Mot de passe valide");
+        }
+    };
+
+    const validateCodeParental = (value: string) => {
+        const codeParentalRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{4,}$/;
+        if (!codeParentalRegex.test(value)) {
+            setCodeParentalError("Le code parental doit contenir au moins 4 caractères, avec des chiffres et des lettres.");
+            setCodeParentalSuccess("");
+        } else {
+            setCodeParentalError("");
+            setCodeParentalSuccess("Code parental valide");
+        }
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        // Vérification de la validité du numéro de contact
-        const contactRegex = /^[0-9]{8,15}$/; // Modifier selon les exigences spécifiques du format
-        if (!contactRegex.test(contact)) {
-            setContactError("Le numéro de contact est invalide.");
+        // Validation finale avant la soumission
+        if (ageError || motDePasseError || codeParentalError) {
+            setFormError("Veuillez corriger les erreurs avant de soumettre.");
             return;
         }
 
-        setContactError(""); // Réinitialiser le message d'erreur
+        setFormError(""); // Réinitialiser les erreurs du formulaire
+        setServerError(""); // Réinitialiser les erreurs du serveur
 
         const formData = new FormData(event.target as HTMLFormElement);
         const rawFormData = {
@@ -44,7 +80,6 @@ export default function RegisterForm() {
             motDePasse: formData.get('motDePasse'),
             codeParental: formData.get('codeParental') || null, // Envoyer null si vide
         };
-        console.log(JSON.stringify(rawFormData));
 
         try {
             const res = await fetch('http://localhost:8000/parent/create', {
@@ -60,10 +95,22 @@ export default function RegisterForm() {
                 console.log(data);
                 router.push('/login');
             } else {
-                throw new Error("Response not ok");
+                const errorData = await res.json();
+                // Afficher les messages d'erreur du serveur
+                if (errorData.detail) {
+                    if (errorData.detail.includes("email")) {
+                        setServerError("Cet email est déjà utilisé, choississew en un autre");
+                    } else if (errorData.detail.includes("contact")) {
+                        setServerError("Ce contact est déjà utilisé, choisissew en un autre.");
+                    } else {
+                        setServerError("Une erreur s'est produite lors de l'inscription.");
+                    }
+                } else {
+                    setServerError("Une erreur s'est produite lors de l'inscription.");
+                }
             }
         } catch (error) {
-            alert("Registration error: " + error);
+            setServerError("Une erreur s'est produite lors de l'inscription.");
             console.log(error);
         }
     };
@@ -94,11 +141,15 @@ export default function RegisterForm() {
                             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
                             placeholder="Âge"
                             value={age}
-                            onChange={(e) => setAge(e.target.value)}
+                            onChange={(e) => {
+                                setAge(e.target.value);
+                                validateAge(e.target.value); // Validation en temps réel
+                            }}
                             required
                         />
                     </div>
                 </div>
+                {ageError && <div className="text-red-500 mb-2">{ageError}</div>}
                 <div className="flex mb-4">
                     <div className="w-1/2 relative">
                         <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -128,7 +179,7 @@ export default function RegisterForm() {
                                 required
                             />
                         </div>
-                        {contactError && <div className="text-red-500 mt-2">{contactError}</div>}
+                        {contactError && <div className="text-red-500 mb-2">{contactError}</div>}
                     </div>
                 </div>
                 <div className="mb-4 relative">
@@ -156,24 +207,42 @@ export default function RegisterForm() {
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
                         placeholder="Mot de passe"
                         value={motDePasse}
-                        onChange={(e) => setMotDePasse(e.target.value)}
+                        onChange={(e) => {
+                            setMotDePasse(e.target.value);
+                            validateMotDePasse(e.target.value); // Validation en temps réel
+                        }}
                         required
                     />
                 </div>
                 <div className="mb-4 relative">
                     <FaKey className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     <input
-                        type="text"
+                        type="password"
                         id="codeParental"
                         name="codeParental"
                         className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pl-8"
-                        placeholder="Code Parental"
+                        placeholder="Code parental"
                         value={codeParental}
-                        onChange={(e) => setCodeParental(e.target.value)}
+                        onChange={(e) => {
+                            setCodeParental(e.target.value);
+                            validateCodeParental(e.target.value); // Validation en temps réel
+                        }}
                         required
                     />
                 </div>
-                <button type="submit" className="bg-purple-600 hover:bg-purple-800 text-white font-semibold rounded-md py-2 px-4 w-full">
+                {/* Messages d'erreur et de succès */}
+                <div className="mb-4">
+                    {motDePasseError && <div className="text-red-500 mb-2">{motDePasseError}</div>}
+                    {motDePasseSuccess && <div className="text-green-500 mb-2">{motDePasseSuccess}</div>}
+                    {codeParentalError && <div className="text-red-500 mb-2">{codeParentalError}</div>}
+                    {codeParentalSuccess && <div className="text-green-500 mb-2">{codeParentalSuccess}</div>}
+                    {formError && <div className="text-red-500 mb-2">{formError}</div>}
+                    {serverError && <div className="text-red-500 mb-2">{serverError}</div>}
+                </div>
+                <button
+                    type="submit"
+                    className="w-full py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
                     Inscription
                 </button>
             </form>

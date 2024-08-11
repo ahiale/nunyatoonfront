@@ -1,3 +1,4 @@
+// components/AgeDistributionChart.tsx
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -11,7 +12,7 @@ interface AgeData {
   count: number;
 }
 
-const AgeDistributionChart = () => {
+const AgeDistributionChart: React.FC = () => {
   const [ageData, setAgeData] = useState<AgeData[]>([]);
 
   useEffect(() => {
@@ -53,8 +54,8 @@ const AgeDistributionChart = () => {
       {
         label: 'Nombre d\'utilisateurs',
         data: ageData.map((item) => item.count),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)', // Couleur rouge pour les barres
+        borderColor: 'rgba(255, 99, 132, 1)', // Bordure rouge
         borderWidth: 1,
       },
     ],
@@ -72,11 +73,7 @@ const AgeDistributionChart = () => {
         },
       },
       title: {
-        display: true,
-        text: 'Répartition des Utilisateurs par Âge',
-        font: {
-          size: 20,
-        },
+        display: false, // Désactiver le titre par défaut
       },
       tooltip: {
         callbacks: {
@@ -91,7 +88,7 @@ const AgeDistributionChart = () => {
       x: {
         title: {
           display: true,
-          text: 'Groupes d\'âge',
+          text: '',
           font: {
             size: 16,
           },
@@ -100,7 +97,7 @@ const AgeDistributionChart = () => {
       y: {
         title: {
           display: true,
-          text: 'Nombre d\'utilisateurs',
+          text: '',
           font: {
             size: 16,
           },
@@ -109,7 +106,14 @@ const AgeDistributionChart = () => {
     },
   };
 
-  return <Bar data={chartData} options={options} />;
+  return (
+    <div className="relative p-4 rounded-lg">
+      <Bar data={chartData} options={options} />
+      <h2 className="text-xs text-black font-semibold absolute bottom-0 left-1/2 transform -translate-x-1/2 pb-2">
+        Répartition des Utilisateurs par Âge
+      </h2>
+    </div>
+  );
 };
 
 export default AgeDistributionChart;

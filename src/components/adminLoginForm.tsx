@@ -3,13 +3,18 @@ import Cookies from 'js-cookie';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { updateParentState } from '@/store/slice';
+import { Provider } from 'react-redux';
+import { store } from '@/store/store';
 
-export default function AdminLoginForm() {
+export default function 
+LoginForm() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(''); // State for error messages
     const router = useRouter();
-
+    const dispatch = useDispatch()
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
     
@@ -20,7 +25,7 @@ export default function AdminLoginForm() {
         };
     
         try {
-            const res = await fetch('http://localhost:8000/parent/login', {
+            const res = await fetch('http://localhost:8000/admin/login', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json'
@@ -28,19 +33,24 @@ export default function AdminLoginForm() {
                 body: JSON.stringify(rawFormData)
             });
             const data = await res.json();
+            // console.log(data)
             
             if (res.ok && data) {
-                // Assuming the admin's email and password are hardcoded or retrieved from a secure place
-                const adminEmail = 'lieben@gmail.com'; // Replace with the actual admin email
-                const adminPassword = 'lieben228'; // Replace with the actual admin password
-
-                if (rawFormData.email === adminEmail && rawFormData.password === adminPassword) {
-                    Cookies.set('token', data[1]); // Ensure 'token' is the correct key
-                    localStorage.setItem("token&Id", JSON.stringify(data));
-                    router.push('/admin'); // Redirect to admin page
-                } else {
-                    setError("Email ou mot de passe invalide."); // Set error message
+                Cookies.set('token', data.id); // Ensure 'token' is the correct key
+                localStorage.setItem("token&Id", JSON.stringify(data));
+                console.log(data.token);
+                const res = await fetch('http://localhost:8000/admin/getAdmin/'+data.id, {
+                    method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json'
+                    }
+                });
+                const parent = await res.json();
+                console.log(parent)
+                if(res.ok){
+                    localStorage.setItem('connectedUser',JSON.stringify(parent))
                 }
+                router.push('/admin');
             } else {
                 setError("Email ou mot de passe invalide."); // Set error message
             }
@@ -53,6 +63,7 @@ export default function AdminLoginForm() {
     };
 
     return (
+        <Provider store={store}>
         <form onSubmit={handleSubmit} className="login-form text-black">
             <div className="mb-4 relative">
                 <input
@@ -83,5 +94,6 @@ export default function AdminLoginForm() {
             {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error message */}
             <button type="submit" className="bg-purple-600 hover:bg-purple-800 text-white font-semibold rounded-md py-2 px-4 w-full">Connexion</button>
         </form>
+        </Provider>
     );
 }

@@ -33,13 +33,13 @@ LoginForm() {
                 body: JSON.stringify(rawFormData)
             });
             const data = await res.json();
-            console.log(data)
+            // console.log(data)
             
             if (res.ok && data) {
-                Cookies.set('token', data[1]); // Ensure 'token' is the correct key
+                Cookies.set('token', data.id); // Ensure 'token' is the correct key
                 localStorage.setItem("token&Id", JSON.stringify(data));
-                console.log(data[0].substring(3));
-                const res = await fetch('http://localhost:8000/parent/get/'+data[0].substring(3), {
+                console.log(data.token);
+                const res = await fetch('http://localhost:8000/parent/get/'+data.id, {
                     method: 'GET',
                     headers: {
                     'Content-Type': 'application/json'

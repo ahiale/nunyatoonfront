@@ -17,7 +17,7 @@ const MovieCard = () => {
     return (
 
       <Provider store={store}> <div>
-      <div> {parentData.nom}</div>
+      {/* <div> {parentData.nom}</div> */}
          {/* Cards Section */}
      <div className="flex pl-10 pr-10 mt-12 gap-6 mx-10">
        <div className="w-1/3 relative">

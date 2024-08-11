@@ -50,7 +50,7 @@ const Navbar = () => {
         footer: '<a href="/login">Se connecter?</a>'
       });
     }else{
-      router.push('/home')
+      router.push('/profil')
     }
   };
   const toggleListMenucodeParental = () => {
@@ -64,7 +64,7 @@ const Navbar = () => {
         footer: '<a href="/login">Se connecter?</a>'
       });
     }else{
-      router.push('/home')
+      router.push('/espaceParental')
     }
   };
 

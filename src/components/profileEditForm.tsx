@@ -60,6 +60,11 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
   const handleSubmit = async () => {
     onSubmit({ ...initialProfile!, pseudo: editPseudo, image: editImage, age: editAge, code_pin: editPin });
     onClose();
+    console.log(editPseudo)
+    console.log(editAge)
+    console.log(editImage)
+    console.log(editPin)
+    
 
     try {
       const enfantUpdateResponse = await fetch(`http://localhost:8000/enfant/${initialProfile?.id}`, {
@@ -69,12 +74,12 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
         },
         body: JSON.stringify({
           pseudo: editPseudo,
-          age: editAge,
+          age: editAge.toString(),
           image_profil: editImage,
           code_pin: editPin,
         }),
       });
-
+      
       if (!enfantUpdateResponse.ok) {
         throw new Error("Erreur lors de l'update de l'enfant");
       }
@@ -109,7 +114,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
     const value = e.target.value;
     const numericValue = value === '' ? 0 : Number(value); // Convert to number or use 0 if empty
 
-    if (numericValue < 5 || numericValue > 14) {
+    if (numericValue < 5 || numericValue > 15) {
       setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
     } else {
       setErrorMessage('');

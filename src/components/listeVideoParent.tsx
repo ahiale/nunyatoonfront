@@ -24,7 +24,7 @@ interface Categorie {
   videos: Array<Video>;
 }
 
-export default function ListeVideo() {
+export default function ListeVideoParent() {
   const [originalCategories, setOriginalCategories] = useState<Categorie[]>([]);
   const [categories, setCategories] = useState<Categorie[]>([]);
   const [resultsFound, setResultsFound] = useState(true); // Manage results found state
@@ -80,15 +80,15 @@ export default function ListeVideo() {
     }, 0);
   };
 
-  const enfantData = useSelector(
-    (state: RootState) => state.AppStates.enfantState
+  const parentData = useSelector(
+    (state: RootState) => state.AppStates.parentState
   );
 
   useEffect(() => {
-    if (enfantData) {
-      console.log(enfantData);
+    if (parentData) {
+      console.log(parentData);
     }
-  }, [enfantData]);
+  }, [parentData]);
 
   useEffect(() => {
     const fetchAllCategories = async () => {
@@ -182,7 +182,7 @@ export default function ListeVideo() {
                         className="relative flex-shrink-0 w-60 h-40 rounded-lg overflow-hidden shadow-2xl transform transition duration-500 ease-in-out hover:shadow-3xl hover:rotate-3 hover:bg-orange-400 cursor-pointer hover:scale-105 bg-orange-300"
                         onClick={() => viewVideo(video)}
                       >
-                        <Link href="/video">
+                        <Link href="/videoParent">
                           <div className="w-full h-full relative">
                             <img
                               className="w-full h-full object-cover object-center rounded-lg"
