@@ -1,5 +1,6 @@
 // components/VideoCountCard.tsx
 import React, { useEffect, useState } from 'react';
+import { FaVideo } from 'react-icons/fa';
 
 const VideoCountCard: React.FC = () => {
   const [videoCount, setVideoCount] = useState<number | null>(null);
@@ -23,12 +24,21 @@ const VideoCountCard: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-blue-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center">
-      <div className="text-center">
-        <h3 className="text-xl font-semibold">Nombre de Vidéos</h3>
-        <p className="text-4xl font-bold mt-2">{videoCount !== null ? videoCount : 'Loading...'}</p>
-      </div>
+    <div className="relative bg-blue-500 text-white p-4 rounded-lg shadow-lg flex flex-col justify-between w-64 h-30">
+    {/* Conteneur pour l'icône et le titre */}
+    <div className="flex items-center mb-2">
+      {/* Icône */}
+      <FaVideo className="w-8 h-8 mr-2" />
+      {/* Texte */}
+      <h3 className="text-xl font-semibold">Nombre de Vidéos</h3>
     </div>
+    {/* Nombre de vidéos en bas */}
+    <div className="flex justify-center">
+      <p className="text-3xl font-bold">
+        {videoCount !== null ? videoCount : 'Loading...'}
+      </p>
+    </div>
+  </div>
   );
 };
 

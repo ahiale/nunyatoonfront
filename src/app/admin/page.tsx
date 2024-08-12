@@ -1,6 +1,7 @@
 "use client";
 import CategoryTable from '@/components/categoryTable';
 import Header from '@/components/header';
+import MotifsTable from '@/components/motifsTable';
 import Sidebar from '@/components/Sidebar';
 import Statistics from '@/components/statistics';
 import UserTable from '@/components/userTable';
@@ -24,6 +25,7 @@ const AdminDashboard: React.FC = () => {
           {section === 'statistics' && <Statistics />}
           {section === 'categories' && <CategoryTable />}
           {section === 'videoStatistics' && <VideoStatistics />}
+          {section === 'motifs' && <MotifsTable />}
         </div>
       </div>
     </div>

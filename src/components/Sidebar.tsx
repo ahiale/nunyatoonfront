@@ -13,7 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
   const [adminName, setAdminName] = useState<string>('');
   
     useEffect(() => {
-      const userData = localStorage.getItem('connectedUser');
+      const userData = localStorage.getItem('connectedAdmin');
       if (userData) {
         const user = JSON.parse(userData);
         setAdminName(user.nom); 
@@ -22,7 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token&Id');
-    localStorage.removeItem('connectedUser');
+    localStorage.removeItem('connectedAdmin');
     router.push('/adminLogin'); // Redirection vers la page de connexion admin
   };
 
@@ -78,6 +78,13 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
              catégories
           </button>
           
+          <button
+            className="w-full text-left px-4 py-2 hover:bg-blue-700 flex items-center text-white"
+            onClick={() => setSection('motifs')}
+          >
+            <FontAwesomeIcon icon={faListAlt} className="mr-2 h-5 w-5" />
+             motis
+          </button>
           
         </nav>
       </div>

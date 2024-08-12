@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import VideoForm from './videoForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import EditVideoForm from "./editVideoFormProps";
 
 interface Video {
   id: string;
@@ -16,6 +17,7 @@ const VideoManagement = () => {
   const [showForm, setShowForm] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState<Video | null>(null);
 
   const handleCloseForm = () => {
     setShowForm(false);
@@ -68,6 +70,14 @@ const VideoManagement = () => {
     setVideoToDelete(null);
   };
 
+  const openEditForm = (video: Video) => {
+    setEditFormData(video);
+  };
+
+  const handleCloseEditForm = () => {
+    setEditFormData(null);
+  };
+
   useEffect(() => {
     fetchVideosAndCategories();
   }, []);
@@ -75,7 +85,7 @@ const VideoManagement = () => {
   return (
     <div className="font-Grandstander">
       <div className="text-black font-bold text-3xl pb-8 pt-8">
-        Liste des videos
+        Liste des vidéos
       </div>
       <button
         className="mb-4 px-6 py-1 bg-purple-600 bg-opacity-25 text-black rounded-lg"
@@ -84,6 +94,13 @@ const VideoManagement = () => {
         <span>Ajouter une vidéo</span>
       </button>
       {showForm && <VideoForm onClose={handleCloseForm} />}
+      {editFormData && (
+        <EditVideoForm
+          video={editFormData}
+          onClose={handleCloseEditForm}
+          onUpdate={() => fetchVideosAndCategories()}
+        />
+      )}
       <table className="min-w-full text-white">
         <thead className='bg-purple-400'>
           <tr>
@@ -107,7 +124,10 @@ const VideoManagement = () => {
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-b">
                 <div className="flex items-center justify-start space-x-2">
-                  <button className="text-indigo-600 hover:text-indigo-900">
+                  <button
+                    className="text-indigo-600 hover:text-indigo-900"
+                    onClick={() => openEditForm(video)}
+                  >
                     <FontAwesomeIcon icon={faEdit} title="Modifier" />
                   </button>
                   <button

@@ -95,7 +95,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
           joursA: editDays,
         }),
       });
-
+      console.log(editDays)
+      console.log(editEndTime)
+      console.log(editStartTime)
       if (!tempsUpdateEcranResponse.ok) {
         throw new Error("Erreur lors de l'update du temps d'écran");
       }

@@ -75,10 +75,10 @@ export default function RegisterForm() {
             nom: formData.get('nom'),
             age: formData.get('age'),
             email: formData.get('email'),
-            contact: formData.get('contact') || null, // Envoyer null si vide
+            contact: formData.get('contact'), // Envoyer null si vide
             pays: formData.get('pays'),
             motDePasse: formData.get('motDePasse'),
-            codeParental: formData.get('codeParental') || null, // Envoyer null si vide
+            codeParental: formData.get('codeParental'), // Envoyer null si vide
         };
 
         try {

@@ -48,7 +48,7 @@ LoginForm() {
                 const parent = await res.json();
                 console.log(parent)
                 if(res.ok){
-                    localStorage.setItem('connectedUser',JSON.stringify(parent))
+                    localStorage.setItem('connectedAdmin',JSON.stringify(parent))
                 }
                 router.push('/admin');
             } else {
