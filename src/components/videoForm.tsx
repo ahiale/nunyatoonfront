@@ -1,5 +1,5 @@
 import { SetStateAction, useEffect, useState } from 'react';
-import { FaFileAlt, FaTags, FaInfoCircle, FaPlay } from 'react-icons/fa';
+import { FaFileAlt, FaTags, FaInfoCircle, FaPlay, FaClock } from 'react-icons/fa';
 
 interface Categorie {
   id: string;
@@ -15,6 +15,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoLink, setVideoLink] = useState('');
   const [title, setTitle] = useState('');
+  const [duree, setDuree] = useState('');
   const [description, setDescription] = useState('');
   const [couverture, setCouverture] = useState<File | null>(null);
   const [categories, setCategories] = useState<Categorie[]>([]);
@@ -72,6 +73,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
       videoFile,
       videoLink,
       title,
+      duree,
       description,
       couverture,
       category
@@ -110,7 +112,7 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
       formDataTwo.append("video_source", videoSource);
       formDataTwo.append("url", videoUrl);
       formDataTwo.append("categorie_id", category);
-      formDataTwo.append("duree", "1h");
+      formDataTwo.append("duree", duree);
       formDataTwo.append("type_video", "1");
 
       const responsetwo = await fetch("http://127.0.0.1:8000/video/createVideo", {
@@ -192,6 +194,18 @@ const VideoForm: React.FC<VideoFormProps> = ({ onClose }) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
             required
           />
+        </div>
+        <div className="relative">
+        <FaClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+<input
+  type="text" // Utilisez "text" au lieu de "time" pour permettre l'entrée de format libre
+  placeholder="Durée de la vidéo (HH:MM:SS)"
+  className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
+  value={duree}
+  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDuree(e.target.value)}
+  required
+/>
+
         </div>
         <div className="relative">
           <FaFileAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

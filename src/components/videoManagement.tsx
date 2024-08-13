@@ -8,6 +8,7 @@ interface Video {
   id: string;
   titre: string;
   description: string;
+  duree:string;
   type_video: number;
   categories: Array<any>;
 }
@@ -107,6 +108,7 @@ const VideoManagement = () => {
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Titre</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Description</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Catégorie</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Duree</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
@@ -122,6 +124,10 @@ const VideoManagement = () => {
               <td className="px-6 py-4 whitespace-nowrap text-black border-b">
                 <div>{video.categories[0]?.titre || "N/A"}</div>
               </td>
+              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
+                <div>{video.duree}</div>
+              </td>
+              
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-b">
                 <div className="flex items-center justify-start space-x-2">
                   <button

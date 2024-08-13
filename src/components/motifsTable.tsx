@@ -22,21 +22,24 @@ const MotifsTable = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <table className="min-w-full bg-white border border-gray-200 text-black">
-        <thead>
+    <div className="container mx-auto p-2 font-Grandstander">
+        <div className="text-black font-bold text-3xl pb-8 pt-4">
+        Liste des videos signalées
+      </div>
+      <table className="min-w-full">
+        <thead className="bg-purple-400">
           <tr>
-            <th className="py-2 px-4 border-b text-black">Nom</th>
-            <th className="py-2 px-4 border-b text-black">Titre</th>
-            <th className="py-2 px-4 border-b text-black">Motif</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Parent</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Video</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Motifss</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-purple-600">
           {motifs.map((item, index) => (
             <tr key={index}>
-              <td className="py-2 px-4 border-b text-black">{item.nom}</td>
-              <td className="py-2 px-4 border-b text-black">{item.titre}</td>
-              <td className="py-2 px-4 border-b text-black">{item.motif}</td>
+              <td className="py-2 px-6 border-b text-black">{item.nom}</td>
+              <td className="py-2 px-6 border-b text-black">{item.titre}</td>
+              <td className="py-2 px-6 border-b text-black">{item.motif}</td>
             </tr>
           ))}
         </tbody>

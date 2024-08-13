@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FaUser, FaImage, FaCalendarAlt, FaKey, FaClock } from 'react-icons/fa';
+import { FaUser, FaCalendarAlt, FaKey, FaClock } from 'react-icons/fa';
 import { Profile } from '../../type';
- // Assurez-vous d'ajuster le chemin en fonction de l'emplacement réel de votre type Profile
 
 type ProfileEditFormProps = {
   onClose: () => void;
@@ -18,6 +17,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
   const [editStartTime, setEditStartTime] = useState('');
   const [editEndTime, setEditEndTime] = useState('');
   const [tempsEcranId, setTempsEcranId] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleDaysChange = (day: string) => {
     setEditDays((prevDays) => (prevDays.includes(day) ? prevDays.filter((d) => d !== day) : [...prevDays, day]));
@@ -60,11 +60,10 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
   const handleSubmit = async () => {
     onSubmit({ ...initialProfile!, pseudo: editPseudo, image: editImage, age: editAge, code_pin: editPin });
     onClose();
-    console.log(editPseudo)
-    console.log(editAge)
-    console.log(editImage)
-    console.log(editPin)
-    
+    console.log(editPseudo);
+    console.log(editAge);
+    console.log(editImage);
+    console.log(editPin);
 
     try {
       const enfantUpdateResponse = await fetch(`http://localhost:8000/enfant/${initialProfile?.id}`, {
@@ -79,7 +78,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
           code_pin: editPin,
         }),
       });
-      
+
       if (!enfantUpdateResponse.ok) {
         throw new Error("Erreur lors de l'update de l'enfant");
       }
@@ -95,9 +94,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
           joursA: editDays,
         }),
       });
-      console.log(editDays)
-      console.log(editEndTime)
-      console.log(editStartTime)
+      console.log(editDays);
+      console.log(editEndTime);
+      console.log(editStartTime);
       if (!tempsUpdateEcranResponse.ok) {
         throw new Error("Erreur lors de l'update du temps d'écran");
       }
@@ -110,11 +109,9 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
     }
   };
 
-  const [errorMessage, setErrorMessage] = useState('');
-
   const handleAgeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const numericValue = value === '' ? 0 : Number(value); // Convert to number or use 0 if empty
+    const numericValue = value === '' ? 0 : Number(value); 
 
     if (numericValue < 5 || numericValue > 15) {
       setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
@@ -125,6 +122,25 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
     setEditAge(numericValue);
   };
 
+  const generateTimeOptions = () => {
+    const options = [];
+    for (let hour = 6; hour <= 22; hour++) {
+      for (let minute = 0; minute < 60; minute += 5) {
+        const formattedHour = hour < 10 ? `0${hour}` : hour.toString();
+        const formattedMinute = minute < 10 ? `0${minute}` : minute.toString();
+        options.push(`${formattedHour}h${formattedMinute}`);
+      }
+    }
+    return options;
+  };
+
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setEditStartTime(value);
+    setEditEndTime(''); // Reset end time when start time changes
+  };
+
+  const isEndTimeDisabled = editStartTime === '';
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
@@ -144,14 +160,6 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
               onChange={(e) => setEditPseudo(e.target.value)}
             />
             <FaUser className="absolute left-3 top-3 text-gray-400" />
-          </div>
-          <div className="relative">
-            <input
-              type="file"
-              className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
-              onChange={(e) => setEditImage(URL.createObjectURL(e.target.files?.[0]!))}
-            />
-            <FaImage className="absolute left-3 top-3 text-gray-400" />
           </div>
           <div className="relative">
             <input
@@ -188,29 +196,42 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
             </div>
           </div>
           <div className="flex space-x-4">
-            <div className="relative">
-              <input
-                type="time"
+            <div className="relative w-full">
+              <select
                 className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
-                placeholder="Heure de début"
                 value={editStartTime}
-                onChange={(e) => setEditStartTime(e.target.value)}
-              />
+                onChange={handleStartTimeChange}
+              >
+                <option value="">Heure de début</option>
+                {generateTimeOptions().map((time) => (
+                  <option key={time} value={time}>{time}</option>
+                ))}
+              </select>
               <FaClock className="absolute left-3 top-3 text-gray-400" />
             </div>
-            <div className="relative">
-              <input
-                type="time"
+            <div className="relative w-full">
+              <select
                 className="w-full p-2 border rounded focus:border-purple-500 focus:ring-0 pl-10"
-                placeholder="Heure de fin"
                 value={editEndTime}
                 onChange={(e) => setEditEndTime(e.target.value)}
-              />
+                disabled={isEndTimeDisabled}
+              >
+                <option value="">Heure de fin</option>
+                {generateTimeOptions().map((time) => (
+                  <option
+                    key={time}
+                    value={time}
+                    className={time <= editStartTime ? 'text-gray-400' : ''}
+                  >
+                    {time}
+                  </option>
+                ))}
+              </select>
               <FaClock className="absolute left-3 top-3 text-gray-400" />
             </div>
           </div>
         </div>
-        <div className="flex space-x-4 mt-4">
+        <div className="flex justify-end mt-4 space-x-2">
           <button onClick={handleSubmit} className="p-2 bg-purple-700 text-white rounded">Enregistrer</button>
           <button onClick={onClose} className="p-2 bg-gray-400 text-white rounded">Annuler</button>
         </div>

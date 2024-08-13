@@ -134,19 +134,14 @@ export default function VideoPage() {
             <FaArrowLeft className="w-6 h-6" />
           </div>
 
-        <div className="flex items-center justify-center p-8">
-          <div className="relative max-w-4xl mx-auto flex items-center space-x-4">
-            <div className="w-2/2">
-              <img
-                src="/images/videoImage.png"
-                alt="Image description"
-                className="w-full h-auto"
-              />
-            </div>
-            <div className="relative w-2/3">
+        <div className="flex items-center justify-center p-12">
+          <div className="relative max-w-4xl mx-auto flex items-center space-x-4 mt-12">
+           
+            <div className="relative w-3/3">
               <div className="relative">
                 <video
                   controls
+                  controlsList="nodownload"
                   className="rounded-lg shadow-lg w-full h-96 object-cover"
                   src={videoData.url}
                 >

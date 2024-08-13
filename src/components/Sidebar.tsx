@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faVideo, faSignOutAlt, faListAlt, faChartBar, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import { FaCommentDots, FaExclamationTriangle, FaRing} from "react-icons/fa";
 
 interface SidebarProps {
   setSection: React.Dispatch<React.SetStateAction<string>>;
@@ -82,8 +83,8 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
             className="w-full text-left px-4 py-2 hover:bg-blue-700 flex items-center text-white"
             onClick={() => setSection('motifs')}
           >
-            <FontAwesomeIcon icon={faListAlt} className="mr-2 h-5 w-5" />
-             motis
+            <FaExclamationTriangle className="mr-2 h-5 w-5" />
+             Videos signalées
           </button>
           
         </nav>

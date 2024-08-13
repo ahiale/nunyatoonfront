@@ -23,6 +23,15 @@ interface ProfilEnfant {
   parent_id?: string;
 }
 
+// Fonction pour générer une couleur en fonction de l'ID de l'enfant
+const getBackgroundColor = (id: string | undefined) => {
+  const couleurs = ["bg-red-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-purple-500"];
+  if (!id) return couleurs[0];
+  const couleurIndex = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % couleurs.length;
+  return couleurs[couleurIndex];
+};
+
+
 const ProfileCard: React.FC<ProfileCardProps> = ({
   enfant,
   onDelete,
@@ -39,11 +48,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   return (
     <div className="relative bg-blue-800 bg-opacity-25 p-4 rounded-lg shadow-md">
       <div className="flex items-center space-x-4">
-        <img
-          src={enfant.image}
-          alt={`${enfant.pseudo} Profile`}
-          className="w-16 h-16 rounded-full object-cover"
-        />
+        <div
+          className={`w-16 h-16 rounded-full flex items-center justify-center ${enfant.image ? '' : getBackgroundColor(enfant.id)} ${!enfant.image ? 'text-white text-xl font-bold' : ''}`}
+        >
+          {enfant.image ? (
+            <img
+              src={enfant.image}
+              alt={`${enfant.pseudo} Profile`}
+              className="w-16 h-16 rounded-full object-cover"
+            />
+          ) : (
+            <span>{enfant.pseudo?.charAt(0).toUpperCase()}</span>
+          )}
+        </div>
         <div>
           <h3 className="text-white text-lg">{enfant.pseudo}</h3>
         </div>

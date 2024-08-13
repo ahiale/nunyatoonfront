@@ -13,18 +13,18 @@ import VideoStatistics from '@/components/videoStatistics';
 import { useState } from 'react';
 
 const AdminDashboard: React.FC = () => {
-  const [section, setSection] = useState<string>('users');
+  const [section, setSection] = useState<string>('statistics');
 
   return (
     <div className='bg-cover bg-center bg-blue-50 h-screen overflow-hidden'>
       <div className="flex h-full">
         <Sidebar setSection={setSection} />
         <div className="flex-1 p-6 overflow-y-auto">
+          {section === 'statistics' && <Statistics />}
+          {section === 'videoStatistics' && <VideoStatistics />}
           {section === 'users' && <UserTable />}
           {section === 'videos' && <VideoManagement />}
-          {section === 'statistics' && <Statistics />}
           {section === 'categories' && <CategoryTable />}
-          {section === 'videoStatistics' && <VideoStatistics />}
           {section === 'motifs' && <MotifsTable />}
         </div>
       </div>

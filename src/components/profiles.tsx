@@ -7,6 +7,7 @@ import EnfantCard from "./enfantCard";
 import ParentCard from "./parentCard";
 import { useDispatch } from "react-redux";
 import { updateParentState } from "@/store/slice";
+import Navbar2 from "./Navbar2";
 
 interface Profile {
   id: string;
@@ -105,7 +106,7 @@ const Profiles: React.FC = () => {
         style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
       >
         <div className="absolute top-5 left-0 w-full">
-          <Navbar />
+          <Navbar2 />
         </div>
 
         <h1 className="text-5xl lg:text-5xl font-bold text-white mb-8">Quel est votre profil?</h1>

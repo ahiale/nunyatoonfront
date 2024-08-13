@@ -11,7 +11,7 @@ function LogoutButton() {
         router.push('/home');
     }
     return (
-        <button className="text-black font-bold hover:text-white transition-transform duration-300 ease-in-out transform hover:scale-110 focus:outline-none" onClick={handleLogout}> Deconnexion </button>
+        <button className="text-white font-bold hover:text-white transition-transform duration-300 ease-in-out transform hover:scale-110 focus:outline-none" onClick={handleLogout}> Deconnexion </button>
     )
 }
 export default LogoutButton;

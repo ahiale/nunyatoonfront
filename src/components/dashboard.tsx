@@ -191,9 +191,10 @@ const Dashboard: React.FC = () => {
       </span>
     </div>
   </div>
-  <div className="text-white p-2 rounded-lg flex items-center justify-center space-x-1">
-    <FaSignOutAlt /> <LogoutButton></LogoutButton>
-  </div>
+  <div className="text-white flex items-center justify-center space-x-1 pt-1 absolute top-3 right-6">
+      <FaSignOutAlt />
+      <LogoutButton />
+    </div>
 </div>
 
 
@@ -224,7 +225,7 @@ const Dashboard: React.FC = () => {
                 key={index}
                 // id={profile?.id || 'zero'}
                 // pseudo={profile?.pseudo || 'Pseudo Inconnu'}
-                // image={profile?.image || '/path/to/default/image.jpg'}
+                // image={profile? || '/path/to/default/image.jpg'}
                 enfant={profile}
                 onEdit={() => openEditForm(profile)}
                 onDelete={() => openDeleteConfirm(profile)}

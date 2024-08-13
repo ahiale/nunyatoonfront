@@ -3,12 +3,13 @@ import { RootState, store } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaHistory, FaPlay, FaSearch } from "react-icons/fa";
+import { FaArrowLeft, FaHistory, FaPlay, FaSearch, FaUser } from "react-icons/fa";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
 const HeroSectionContainer = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
 
   const searchData = useSelector(
     (state: RootState) => state.AppStates.searchState
@@ -18,7 +19,8 @@ const HeroSectionContainer = () => {
     const newSearch = e.target.value;
     setSearch(newSearch);
     dispatch(updateSearchState(newSearch));
-    // Updated search state should be logged immediately
+    console.log(newSearch)
+    console.log(searchData)
     setTimeout(() => {
       console.log(store.getState().AppStates.searchState);
     }, 0);
@@ -33,6 +35,7 @@ const HeroSectionContainer = () => {
   );
 
   useEffect(() => {
+    setIsMounted(true);
     if (enfantData) {
       console.log(enfantData);
       console.log(parentData);
@@ -41,101 +44,80 @@ const HeroSectionContainer = () => {
 
   return (
     <Provider store={store}>
-      <div className="px-2">
-        {/* Add horizontal padding */}
+      <div className="px-4">
         <div className="p-8 flex flex-col items-center font-Grandstander">
-          {/* Back button */}
-      <div className="absolute top-4 left-4">
-        <Link href="/profil" className="text-white text-2xl">
-          <FaArrowLeft />
-        </Link>
-      </div>
+          
           {/* Hero Section */}
-          <div className="flex justify-between items-center w-full max-w-screen-lg">
-            <div className="flex items-center space-x-4">
-              <div className="text-black text-2xl font-bold">
-                <Image
-                  src="/images/logo.png"
-                  alt="Logo"
-                  width={150}
-                  height={150}
-                  className="rounded-full"
-                />
-              </div>
+          <div className="flex justify-between items-center w-full max-w-screen-lg mt-4">
+            <div className="flex items-center space-x-8">
+              <Image
+                src="/images/logo.png"
+                alt="Logo"
+                width={150}
+                height={150}
+                className="rounded-full"
+              />
+              {/* Ajout de la marge à droite pour espacer les éléments */}
+              <div className="mr-8"></div>
             </div>
 
-            <div className="flex items-center space-x-8">
-              <div className="relative">
+            {/* Navbar pour Profils, Historique et barre de recherche */}
+            <div className="flex items-center space-x-6 px-4 py-2 rounded-full shadow-lg">
+
+              {/* Enfant Data en dehors de la navbar */}
+            {isMounted && enfantData && (
+              <div className="flex items-center space-x-2 ml-4">
+                <div className="text-white text-xl ">
+                hey,  {enfantData.pseudo} <span>😎🎉</span>
+                </div>
+              </div>
+            )}
+              {/* Bouton Profils */}
+              <Link
+                href="/profil"
+                className="flex items-center text-white hover:text-white transition-colors duration-300 text-xl"
+              >
+                <FaUser className="mr-1 h-4 w-4 text-white transform transition-transform duration-300 hover:scale-110" />
+                Profils
+              </Link>
+
+              {/* Bouton Historique */}
+              <Link
+                href="/historique"
+                className="flex items-center text-white hover:text-white transition-colors duration-300 text-xl"
+              >
+                <FaHistory className="mr-1 h-4 w-4 text-xl transform transition-transform duration-300 hover:scale-110" />
+                Historique
+              </Link>
+
+              {/* Barre de recherche */}
+              <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder="film ou une serie"
-                  className="px-4 py-2 rounded-full bg-blue-600 bg-opacity-25 focus:outline-none"
+                  placeholder="choisis ta video"
+                  className="w-full px-3 py-2 rounded-full bg-blue-600 bg-opacity-25 focus:outline-none text-sm"
                   value={search}
                   onChange={searchInput}
                 />
-                <FaSearch className="absolute top-3 right-3 text-black-500" />
-              </div>
-              <Link
-                href="/historique"
-                className="flex items-center text-black hover:text-white transition-colors duration-300 font-bold"
-              >
-                <FaHistory className="mr-2 text-2xl transform transition-transform duration-300 hover:scale-110" />
-                Mon historique
-              </Link>
-              <div className="flex items-center space-x-2">
-                <div className="text-black text-lg font-semibold">
-                  {enfantData?.pseudo} <span> 😎🎉 </span>
-                </div>
-                {/* <Image
-                  src={enfantData.image}
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                /> */}
+                <FaSearch className="absolute top-2 right-3 text-gray-500" />
               </div>
             </div>
+
           </div>
 
-          {/* Cards Section */}
-          <div className="flex ml-10 mr-10 mt-12 gap-6">
-            <div className="w-1/3 relative rounded-xl shadow-lg">
-              <div className="overflow-hidden h-60">
-                <Image
-                  src="/images/cartoon2.jpeg"
-                  alt="The Adventure of Blue Sword"
-                  width={400}
-                  height={180}
-                  layout="responsive"
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 flex items-end justify-center p-4 bg-black bg-opacity-50">
-                  <div className="flex items-center text-white text-lg font-bold">
-                    <FaPlay className="mr-2" />
-                    <span>Let Play Movie</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-2/3 relative rounded-xl shadow-lg ">
-              <div className="overflow-hidden h-60">
-                <Image
-                  src="/images/cartoon1.jpeg"
-                  alt="Recalling the Journey of Dol"
-                  width={700}
-                  height={150}
-                  layout="responsive"
-                  className="object-cover rounded-xl"
-                />
-                <div className="absolute inset-0 flex items-end justify-center p-4 bg-black bg-opacity-50">
-                  <div className="flex items-center text-white text-lg font-bold">
-                    <FaPlay className="mr-2" />
-                    <span>Let Play Movie</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Vidéo en bannière */}
+          <div className="w-full mt-12 pl-12 pr-12 relative rounded-lg">
+            <video
+              src="/images/videoBanner2.mp4"
+              autoPlay
+              loop
+              playsInline
+              className="object-cover w-full h-[450px] rounded-lg" // Ajustez la hauteur selon vos besoins
+            >
+              Your browser does not support the video tag.
+            </video>
           </div>
+
         </div>
       </div>
     </Provider>

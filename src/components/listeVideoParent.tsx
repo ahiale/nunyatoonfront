@@ -5,7 +5,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import { updateVideoState } from "@/store/slice";
 import { RootState, store } from "@/store/store";
-import { FaChevronLeft, FaChevronRight, FaFrown } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaClock, FaFrown, FaPlayCircle } from 'react-icons/fa';
 
 interface Video {
   id: string;
@@ -27,7 +27,8 @@ interface Categorie {
 export default function ListeVideoParent() {
   const [originalCategories, setOriginalCategories] = useState<Categorie[]>([]);
   const [categories, setCategories] = useState<Categorie[]>([]);
-  const [resultsFound, setResultsFound] = useState(true); // Manage results found state
+  const [trendingVideos, setTrendingVideos] = useState<Video[]>([]);
+  const [resultsFound, setResultsFound] = useState(true);
   const dispatch = useDispatch();
 
   const videoData = useSelector(
@@ -41,7 +42,7 @@ export default function ListeVideoParent() {
   const filterCategoriesAndVideos = () => {
     if (!searchData) {
       setCategories(originalCategories);
-      setResultsFound(originalCategories.length > 0); // Check if categories exist
+      setResultsFound(originalCategories.length > 0);
       return;
     }
 
@@ -51,7 +52,7 @@ export default function ListeVideoParent() {
 
     if (categoriesFilteredByCategoryTitle.length > 0) {
       setCategories(categoriesFilteredByCategoryTitle);
-      setResultsFound(true); // Results found
+      setResultsFound(true);
     } else {
       const categoriesWithFilteredVideos = originalCategories.map(category => {
         const filteredVideos = category.videos.filter(video =>
@@ -65,7 +66,7 @@ export default function ListeVideoParent() {
       }).filter(category => category.videos.length > 0);
 
       setCategories(categoriesWithFilteredVideos);
-      setResultsFound(categoriesWithFilteredVideos.length > 0); // Update results found state
+      setResultsFound(categoriesWithFilteredVideos.length > 0);
     }
   };
 
@@ -102,22 +103,46 @@ export default function ListeVideoParent() {
 
         if (!categoriesResponse.ok) {
           throw new Error(
-            `Erreur lors de la récupération des categories: ${categoriesResponse.statusText}`
+            `Erreur lors de la récupération des catégories: ${categoriesResponse.statusText}`
           );
         }
 
         const categorieData: Categorie[] = await categoriesResponse.json();
         setOriginalCategories(categorieData);
         setCategories(categorieData);
-        setResultsFound(categorieData.length > 0); // Set results found based on fetched data
+        setResultsFound(categorieData.length > 0);
         console.log(categorieData);
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
-        setResultsFound(false); // No results found if error occurs
+        setResultsFound(false);
+      }
+    };
+
+    const fetchTrendingVideos = async () => {
+      try {
+        const response = await fetch("http://localhost:8000/video/allVideo");
+        if (!response.ok) {
+          throw new Error("Erreur de réseau");
+        }
+        const allVideos: Video[] = await response.json();
+
+        // Trier les vidéos par nombre de likes, en ordre décroissant
+        const sortedVideos = allVideos.sort((a, b) => b.nbre_like - a.nbre_like);
+
+        // Obtenir les 10 vidéos les plus aimées
+        const topVideos = sortedVideos.slice(0, 10);
+
+        // Mettre à jour l'état avec les vidéos tendance
+        setTrendingVideos(topVideos);
+        setResultsFound(topVideos.length > 0);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des vidéos tendances:", error);
+        setResultsFound(false);
       }
     };
 
     fetchAllCategories();
+    fetchTrendingVideos();
   }, []);
 
   return (
@@ -141,19 +166,83 @@ export default function ListeVideoParent() {
           </div>
         ) : (
           <>
-            <div className="flex space-x-2 overflow-x-auto p-4 rounded-lg mt-5 shadow-lg mx-10 bg-blue-500 bg-opacity-25 scrollbar-hide">
+            {/* Liste des Catégories */}
+            <div className="flex space-x-2 overflow-x-auto p-4 rounded-lg mt-5 shadow-lg mx-10  mb-8 scrollbar-hide">
               {categories.map((category, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center justify-center w-40 h-20 rounded-lg bg-blue-500 bg-opacity-25 text-white hover:bg-blue-600 transition duration-300"
+                  className="flex flex-col items-center justify-center w-40 h-20 rounded-lg bg-purple-500 bg-opacity-25 text-white hover:bg-purple-600 transition duration-300"
                 >
-                  <div className="text-xl text-black font-bold">
+                  <div className="text-xl text-white font-bold">
                     {category.titre}
                   </div>
                 </div>
               ))}
             </div>
 
+            {/* Liste des Vidéos Tendances */}
+            <div className="mx-10 mb-8">
+              <h2 className="text-3xl font-semibold text-white mb-4">Liste des vidéos tendances</h2>
+              <div className="relative ">
+                <button
+                  onClick={() =>
+                    document.querySelector('.trending-scroll-container')?.scrollBy({
+                      left: -300,
+                      behavior: 'smooth',
+                    })
+                  }
+                  className="absolute top-1/2 -left-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-purple-600 transition-transform duration-300 z-10"
+                >
+                  <FaChevronLeft className="w-6 h-6" />
+                </button>
+
+                <div className="trending-scroll-container flex overflow-x-auto space-x-4 p-4 rounded-lg  scrollbar-hide mx-10 mt-10">
+                  {trendingVideos.map((video, index) => (
+                    <div
+                      key={index}
+                      className="relative flex-shrink-0 w-60 h-40 rounded-lg overflow-hidden shadow-2xl transform transition duration-500 ease-in-out hover:shadow-3xl hover:rotate-3 hover:bg-orange-400 cursor-pointer hover:scale-105 bg-orange-300"
+                      onClick={() => viewVideo(video)}
+                    >
+                      <Link href="/videoParent">
+                        <div className="w-full h-full relative">
+                          <img
+                            className="w-full h-full object-cover object-center rounded-lg"
+                            src={video.couverture}
+                            alt={video.titre}
+                          />
+                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 text-white text-xs flex justify-between items-center">
+                        <span className="flex items-center">
+                        <FaPlayCircle className="mr-1" />
+                           {video.titre}
+                          </span>
+
+                          <span className="flex items-center">
+                            <FaClock className="mr-1" />
+                            {video.duree}
+                          </span>
+                          
+                        </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() =>
+                    document.querySelector('.trending-scroll-container')?.scrollBy({
+                      left: 300,
+                      behavior: 'smooth',
+                    })
+                  }
+                  className="absolute top-1/2 -right-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-purple-600 transition-transform duration-300 z-10"
+                >
+                  <FaChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            {/* Liste des Vidéos par Catégorie */}
             {categories.map((categorie, index) => (
               <div key={index} className="relative">
                 <div className="font-Grandstander text-3xl font-semibold text-white mx-10 mt-10 flex justify-between">
@@ -165,17 +254,17 @@ export default function ListeVideoParent() {
                 <div className="relative mx-10 mt-6">
                   <button
                     onClick={() =>
-                      document.querySelector('.scroll-container')?.scrollBy({
+                      document.querySelector(`.scroll-container-${categorie.id}`)?.scrollBy({
                         left: -300,
                         behavior: 'smooth',
                       })
                     }
-                    className="absolute top-1/2 -left-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-blue-600 transition-transform duration-300 z-10"
+                    className="absolute top-1/2 -left-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-purple-600 transition-transform duration-300 z-10"
                   >
                     <FaChevronLeft className="w-6 h-6" />
                   </button>
 
-                  <div className="scroll-container flex overflow-x-auto space-x-4 scrollbar-hide ml-8">
+                  <div className={`scroll-container-${categorie.id} flex overflow-x-auto space-x-4 p-4 rounded-lg  scrollbar-hide ml-8`}>
                     {categorie.videos.map((video, index) => (
                       <div
                         key={index}
@@ -189,6 +278,18 @@ export default function ListeVideoParent() {
                               src={video.couverture}
                               alt={video.titre}
                             />
+                             <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 text-white text-xs flex justify-between items-center">
+                        <span className="flex items-center">
+                        <FaPlayCircle className="mr-1" />
+                           {video.titre}
+                          </span>
+
+                          <span className="flex items-center">
+                            <FaClock className="mr-1" />
+                            {video.duree}
+                          </span>
+                          
+                        </div>
                           </div>
                         </Link>
                       </div>
@@ -197,12 +298,12 @@ export default function ListeVideoParent() {
 
                   <button
                     onClick={() =>
-                      document.querySelector('.scroll-container')?.scrollBy({
+                      document.querySelector(`.scroll-container-${categorie.id}`)?.scrollBy({
                         left: 300,
                         behavior: 'smooth',
                       })
                     }
-                    className="absolute top-1/2 -right-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-blue-600 transition-transform duration-300 z-10"
+                    className="absolute top-1/2 -right-8 transform -translate-y-1/2 text-white p-3 rounded-lg shadow-lg hover:bg-purple-600 transition-transform duration-300 z-10"
                   >
                     <FaChevronRight className="w-6 h-6" />
                   </button>
