@@ -241,7 +241,7 @@ export default function RegisterForm() {
                 </div>
                 <button
                     type="submit"
-                    className="w-full py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                     Inscription
                 </button>

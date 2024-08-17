@@ -82,14 +82,6 @@ const Navbar = () => {
       <div className="flex space-x-4 items-center m-8">
         
           <div
-            onClick={toggleListMenuAcceuil}
-            className="hover:text-black cursor-pointer"
-          >
-            {" "}
-            Accueil
-          </div>
-
-          <div
             onClick={toggleListMenuProfils}
             className="hover:text-black cursor-pointer"
           >

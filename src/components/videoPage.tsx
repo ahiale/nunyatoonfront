@@ -101,7 +101,7 @@ export default function VideoPage() {
       setLiked(r.like);
       console.log("liked?", r.like)
       console.log("like",liked)
-      // Ensure state is updated before dispatching
+     
       const nb_lik = r.like ? videoData.nbre_like + 1 : videoData.nbre_like -1;
 
       dispatch(updateVideoState({

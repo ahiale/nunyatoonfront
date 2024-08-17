@@ -4,6 +4,7 @@ import { PolarArea } from 'react-chartjs-2';
 import PolarAreaChart from './PolarAreaChart';
 import VideoCountCard from './videoCountCard';
 import TopLikedVideosChart from './topLikedVideosChart';
+import PieChartMotifs from './pieChartMotifs';
 
 
 const VideoStatistics: React.FC = () => {
@@ -14,6 +15,7 @@ const VideoStatistics: React.FC = () => {
       {/* <PolarAreaChart /> */}
       <VideoCountCard>
       </VideoCountCard>
+      <PieChartMotifs></PieChartMotifs>
       <TopLikedVideosChart></TopLikedVideosChart>
      
     </div>

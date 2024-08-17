@@ -9,6 +9,7 @@ interface TempsEcran {
 
 const VoirProfil = ({ onClose, initialProfile }: { onClose: () => void; initialProfile?: Profile }) => {
     const [tempsEcran, setTempsEcran] = useState<TempsEcran>();
+    const result = tempsEcran?.joursA?.replace(/{|}/g, "").split(",").join(",");
 
     useEffect(() => {
         const fetchTempsEcran = async () => {
@@ -47,7 +48,7 @@ const VoirProfil = ({ onClose, initialProfile }: { onClose: () => void; initialP
                 <p className="text-black"><strong>Pseudo:</strong> {initialProfile?.pseudo}</p>
                 <p className="text-black"><strong>Âge:</strong> {initialProfile?.age}</p>
                 <p className="text-black"><strong>Code PIN:</strong> {initialProfile?.code_pin}</p>
-                <p className="text-black"><strong>Jours de connexion:</strong> {tempsEcran?.joursA}</p>
+                <p className="text-black"><strong>Jours de connexion:</strong> {`${tempsEcran?.joursA?.replace(/{|}/g, "").split(",").join(",")}`}</p>
                 <p className="text-black"><strong>Heures de connexion:</strong> {`${tempsEcran?.heuresD?.split(".")[0]} - ${tempsEcran?.heuresF?.split(".")[0]}`}</p>
                 <button
                     onClick={onClose}

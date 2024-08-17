@@ -30,7 +30,7 @@ const Navbar = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Connectez-vous oh!",
+        text: "Vous devez vous connecter pour acceder a ces fonctionalites :)",
         footer: '<a href="/login">Se connecter?</a>'
       });
       
@@ -46,7 +46,7 @@ const Navbar = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Connectez-vous oh!",
+        text: "Vous devez vous connecter pour acceder a ces fonctionalites :)",
         footer: '<a href="/login">Se connecter?</a>'
       });
     }else{
@@ -60,7 +60,7 @@ const Navbar = () => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Connectez-vous oh!",
+        text: "Vous devez vous connecter pour acceder a ces fonctionalites :)",
         footer: '<a href="/login">Se connecter?</a>'
       });
     }else{

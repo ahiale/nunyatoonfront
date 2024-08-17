@@ -124,34 +124,40 @@ const UserTable: React.FC = () => {
 
   const handleSubmit = async () => {
     if (currentParent) {
+      // Mise à jour optimiste de l'état
+      setParents(prevParents =>
+        prevParents.map(parent =>
+          parent.id === currentParent.id ? { ...parent, ...currentParent } : parent
+        )
+      );
+  
       try {
         const response = await fetch(`http://127.0.0.1:8000/parent/${currentParent.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(currentParent) // Utilisation des données mises à jour
+          body: JSON.stringify(currentParent)
         });
-
+  
         if (!response.ok) {
           throw new Error(`Erreur lors de la mise à jour du parent: ${response.statusText}`);
         }
-
-        // Met à jour l'état avec les données du parent modifié
-        setParents(prevParents =>
-          prevParents.map(parent =>
-            parent.id === currentParent.id ? { ...parent, ...currentParent } : parent
-          )
-        );
-
+  
+        // Confirmation de la mise à jour réussie
         setIsEditFormOpen(false);
         setCurrentParent(null);
       } catch (error) {
         console.error("Erreur lors de la mise à jour du parent:", error);
+        // Revenir à l'état précédent si une erreur se produit
+        setParents(prevParents =>
+          prevParents.map(parent =>
+            parent.id === currentParent.id ? { ...parent, ...prevParents.find(p => p.id === currentParent.id) } : parent
+          )
+        );
       }
     }
   };
-
   const handleCloseEditForm = () => {
     setIsEditFormOpen(false);
     setCurrentParent(null);
@@ -224,22 +230,22 @@ const UserTable: React.FC = () => {
 
       {/* Modal pour la suppression */}
       {isDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50 text-black">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-lg font-bold mb-4">Confirmer la suppression</h3>
             <p>Êtes-vous sûr de vouloir supprimer ce parent ?</p>
-            <div className="flex gap-4 mt-4">
+            <div className="flex gap-4 mt-4 justify-end">
               <button
                 onClick={handleDelete}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
               >
-                Supprimer
+                oui
               </button>
               <button
                 onClick={handleCloseDialog}
-                className="bg-gray-300 px-4 py-2 rounded"
+                className="bg-gray-300 hover:bg-gray-500 px-4 py-2 rounded"
               >
-                Annuler
+               non
               </button>
             </div>
           </div>

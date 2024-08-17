@@ -24,6 +24,7 @@ const Register = () => {
         <RegisterForm />
 
         <div className="mt-3 text-black text-center">
+          vous avez deja un compte?
           <Link href="/login" className="text-purple-500 hover:text-purple-800"> se connecter </Link>
         </div>
       </div>

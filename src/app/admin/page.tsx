@@ -2,6 +2,7 @@
 import CategoryTable from '@/components/categoryTable';
 import Header from '@/components/header';
 import MotifsTable from '@/components/motifsTable';
+import PrivateRoute from '@/components/privatedRouter';
 import Sidebar from '@/components/Sidebar';
 import Statistics from '@/components/statistics';
 import UserTable from '@/components/userTable';
@@ -16,6 +17,7 @@ const AdminDashboard: React.FC = () => {
   const [section, setSection] = useState<string>('statistics');
 
   return (
+    <PrivateRoute forAdmin={true}>
     <div className='bg-cover bg-center bg-blue-50 h-screen overflow-hidden'>
       <div className="flex h-full">
         <Sidebar setSection={setSection} />
@@ -29,6 +31,7 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
     </div>
+    </PrivateRoute>
   );
 };
 export default AdminDashboard;

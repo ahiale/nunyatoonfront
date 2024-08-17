@@ -109,6 +109,7 @@ export default function VideoPageParent() {
             <div className="relative">
               <video
                 controls
+                controlsList="nodownload"
                 className="rounded-lg shadow-lg w-full h-70 object-cover"
                 src={videoData.url}
               >
@@ -159,10 +160,10 @@ export default function VideoPageParent() {
                         Sélectionner une raison
                       </option>
                       <option
-                        value="Contenu inapproprié pour mon enfant"
+                        value="Contenu inapproprié pour mes enfants"
                         className="bg-white bg-opacity-75 text-black"
                       >
-                        Contenu inapproprié pour mon enfant
+                        Contenu inapproprié pour mes enfants
                       </option>
                       <option
                         value="Harcèlement ou intimidation"

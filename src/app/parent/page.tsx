@@ -5,6 +5,7 @@ import ListeVideo from "@/components/ListeVideo";
 import ListeVideoParent from "@/components/listeVideoParent";
 import MovieCard from "@/components/movieCard";
 import Navbar from "@/components/Navbar";
+import PrivateRoute from "@/components/privatedRouter";
 import { store } from "@/store/store";
 import Image from 'next/image';
 import { FaPlay, FaSearch } from 'react-icons/fa';
@@ -13,6 +14,7 @@ import { Provider } from "react-redux";
 export default function Parent() {
   return (
   <Provider store={store}>
+    <PrivateRoute forAdmin={false}>
       <>
     <div
       className=" bg-gradient-to-r from-purple-700 to-blue-900 bg-opacity-75"
@@ -35,6 +37,7 @@ export default function Parent() {
       </div>
       <Footer />
     </>
+    </PrivateRoute>
   </Provider>
   );
 }
