@@ -7,6 +7,8 @@ import Link from "next/link";
 import { updateVideoState } from "@/store/slice";
 import { FaArrowLeft, FaFrown, FaSearch } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Loader from "./loader";
+
 
 const HistoriqueComponent = () => {
   const [historiqueVideos, setHistoriqueVideos] = useState<any[]>([]);
@@ -14,6 +16,7 @@ const HistoriqueComponent = () => {
   const [dateFin, setDateFin] = useState<string>("");
   const [filteredVideos, setFilteredVideos] = useState<any[]>([]);
   const [noResults, setNoResults] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true); // Gestion du loader
 
   const aujourdHui = new Date().toISOString().split("T")[0]; // Date d'aujourd'hui
 
@@ -76,6 +79,8 @@ const HistoriqueComponent = () => {
         setHistoriqueVideos(limitedVideos);
       } catch (error) {
         console.error("Erreur:", error);
+      } finally {
+        setLoading(false); // Fin du chargement
       }
     };
 
@@ -106,6 +111,7 @@ const HistoriqueComponent = () => {
         className="min-h-screen bg-cover bg-center font-Grandstander"
         style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
       >
+          {loading && <Loader />}
         <div className="relative">
           <div
             onClick={navigateBack}
@@ -119,43 +125,42 @@ const HistoriqueComponent = () => {
             <span className="text-yellow-400">VIDEOS</span>
           </div>
 
-          <div className="flex flex-col items-center p-4">
-            {/* <div className="text-lg text-white mb-4">
-              Rechercher les videos par date
-            </div> */}
-            <div className="flex items-center space-x-4 mb-4">
-              <input
-                type="date"
-                value={dateDebut}
-                onChange={(e) => setDateDebut(e.target.value)}
-                placeholder="Date de début"
-                max={dateFin ? dateFin : aujourdHui} // Date de fin ou aujourd'hui comme maximum
-                className="p-2 border rounded bg-blue-600 bg-opacity-25 text-black border-blue-300 focus:border-blue-600 focus:outline-none"
-              />
-              <input
-                type="date"
-                value={dateFin}
-                onChange={(e) => setDateFin(e.target.value)}
-                placeholder="Date de fin"
-                min={dateDebut} // La date de début est le minimum
-                className="p-2 border rounded bg-blue-600 bg-opacity-25 text-black border-blue-300 focus:border-blue-600 focus:outline-none"
-              />
+         
+            <div className="flex flex-col items-center p-4">
+              <div className="flex items-center space-x-4 mb-4">
+                <input
+                  type="date"
+                  value={dateDebut}
+                  onChange={(e) => setDateDebut(e.target.value)}
+                  placeholder="Date de début"
+                  max={dateFin ? dateFin : aujourdHui} // Date de fin ou aujourd'hui comme maximum
+                  className="p-2 border rounded bg-blue-600 bg-opacity-25 text-black border-blue-300 focus:border-blue-600 focus:outline-none"
+                />
+                <input
+                  type="date"
+                  value={dateFin}
+                  onChange={(e) => setDateFin(e.target.value)}
+                  placeholder="Date de fin"
+                  min={dateDebut} // La date de début est le minimum
+                  className="p-2 border rounded bg-blue-600 bg-opacity-25 text-black border-blue-300 focus:border-blue-600 focus:outline-none"
+                />
 
-              <button
-                onClick={() => {}}
-                className="bg-transparent text-white p-2 border rounded flex items-center justify-center hover:bg-blue-600 transition-colors duration-300"
-              >
-                <FaSearch className="w-6 h-6" />
-              </button>
-            </div>
-
-            {noResults && (
-              <div className="text-red-500 font-semibold text-lg mt-4">
-                 <FaFrown className="text-6xl mb-4 text-black" />
-                Aucun résultat trouvé pour les dates sélectionnées.
+                <button
+                  onClick={() => {}}
+                  className="bg-transparent text-white p-2 border rounded flex items-center justify-center hover:bg-blue-600 transition-colors duration-300"
+                >
+                  <FaSearch className="w-6 h-6" />
+                </button>
               </div>
-            )}
-          </div>
+
+              {noResults && (
+                <div className="text-red-500 font-semibold text-lg mt-4">
+                  <FaFrown className="text-6xl mb-4 text-black" />
+                  Aucun résultat trouvé pour les dates sélectionnées.
+                </div>
+              )}
+            </div>
+          
 
           <div className="flex-1 flex p-8">
             <div className="w-2/3 mx-auto flex flex-col items-center">

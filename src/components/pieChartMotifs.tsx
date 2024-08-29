@@ -104,7 +104,6 @@ const PieChartMotifs: React.FC = () => {
       </div>
       
       <div style={{ width: '45%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h3 style={{ marginBottom: '10px', fontSize: '12px' }}>Vidéos Signalées</h3>
         <div style={{ width: '100%', height: '300px' }}> {/* Uniformiser la hauteur des deux graphiques */}
           <Bar
             data={{

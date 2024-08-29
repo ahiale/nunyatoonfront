@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEnvelope, FaLock, FaPhone, FaUser, FaKey, FaGlobe } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import Loader from './loader';
+
 
 const countryCodes: Record<string, string> = {
     Togo: "228",
@@ -25,6 +28,7 @@ export default function RegisterForm() {
     const [codeParentalSuccess, setCodeParentalSuccess] = useState('');
     const [formError, setFormError] = useState('');
     const [serverError, setServerError] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const validateAge = (value: string) => {
@@ -60,6 +64,7 @@ export default function RegisterForm() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setLoading(true);
 
         // Validation finale avant la soumission
         if (ageError || motDePasseError || codeParentalError) {
@@ -75,10 +80,10 @@ export default function RegisterForm() {
             nom: formData.get('nom'),
             age: formData.get('age'),
             email: formData.get('email'),
-            contact: formData.get('contact'), // Envoyer null si vide
+            contact: formData.get('contact'), 
             pays: formData.get('pays'),
             motDePasse: formData.get('motDePasse'),
-            codeParental: formData.get('codeParental'), // Envoyer null si vide
+            codeParental: formData.get('codeParental'), 
         };
 
         try {
@@ -93,7 +98,16 @@ export default function RegisterForm() {
             if (res.ok) {
                 const data = await res.json();
                 console.log(data);
+                // Show SweetAlert success message
+            Swal.fire({
+                title: 'Inscription réussie!',
+                text: 'Vous allez être redirigé vers la page de connexion.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
                 router.push('/login');
+            });
+                
             } else {
                 const errorData = await res.json();
                 // Afficher les messages d'erreur du serveur
@@ -113,10 +127,15 @@ export default function RegisterForm() {
             setServerError("Une erreur s'est produite lors de l'inscription.");
             console.log(error);
         }
+        finally {
+            setLoading(false); // Stop loader
+        }
     };
 
     return (
+        
         <div>
+            {loading && <Loader />}
             <form onSubmit={handleSubmit} className="">
                 <div className="flex mb-4">
                     <div className="w-1/2 pr-2 relative">

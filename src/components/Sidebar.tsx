@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSection }) => {
       <div className="p-4 flex flex-col items-center">
         <div className="text-left flex gap-4">
           <FontAwesomeIcon icon={faUser} className="text-white h-5 w-5" />
-          <div className="text-xl text-white"> Admin: {adminName}</div>
+          <div className="text-lg text-white"> Admin: {adminName}</div>
         </div>
         <button
           className="mt-2 px-2 py-1 bg-purple-500 bg-opacity-25 text-white rounded-lg flex items-center"

@@ -15,6 +15,7 @@ const VideoStatistics: React.FC = () => {
       {/* <PolarAreaChart /> */}
       <VideoCountCard>
       </VideoCountCard>
+      <br></br>
       <PieChartMotifs></PieChartMotifs>
       <TopLikedVideosChart></TopLikedVideosChart>
      

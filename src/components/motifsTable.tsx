@@ -2,12 +2,14 @@
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
+import Loader from "./loader";
 
 const MotifsTable = () => {
   const [motifs, setMotifs] = useState<any[]>([]);
   const [showDialog, setShowDialog] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [parentId, setParentId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // État pour le chargement
 
   useEffect(() => {
     const fetchMotifs = async () => {
@@ -20,6 +22,8 @@ const MotifsTable = () => {
         setMotifs(data);
       } catch (error) {
         console.error("Erreur:", error);
+      } finally {
+        setLoading(false); // Masquer le loader lorsque les données sont chargées
       }
     };
 
@@ -65,6 +69,7 @@ const MotifsTable = () => {
 
   return (
     <div className="container mx-auto p-2 font-Grandstander">
+      {loading && <Loader />} {/* Afficher le loader pendant le chargement */}
       <div className="text-black font-bold text-3xl pb-8 pt-4">
         Liste des vidéos signalées
       </div>
@@ -74,7 +79,7 @@ const MotifsTable = () => {
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Parent</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Vidéo</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Motifs</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Action</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"></th> {/* Ajouter une colonne pour les actions */}
           </tr>
         </thead>
         <tbody className="divide-y divide-purple-600">
@@ -84,13 +89,8 @@ const MotifsTable = () => {
               <td className="py-2 px-6 border-b text-black">{item.titre}</td>
               <td className="py-2 px-6 border-b text-black">{item.motif}</td>
               <td className="py-2 px-6 border-b text-black">
-                <button
-                  className="text-red-600 hover:text-red-900 mx-2"
-                  onClick={() => openConfirmationDialog(item.video_id, item.parent_id)}
-                >
-                  <FontAwesomeIcon icon={faTrash} title="Supprimer" />
-                </button>
-              </td>
+                
+              </td> {/* Ajouter des boutons d'action */}
             </tr>
           ))}
         </tbody>
@@ -100,16 +100,16 @@ const MotifsTable = () => {
       {showDialog && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <p className="text-black">Êtes-vous sûr de vouloir retirer cette video? </p>
+            <p className="text-black">Êtes-vous sûr de vouloir retirer cette vidéo ?</p>
             <div className="mt-4 flex justify-end">
-              <button 
-                className="bg-red-500  hover:bg-red-600 text-white px-4 py-2 rounded mr-2" 
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded mr-2"
                 onClick={handleDelete}
               >
                 Oui
               </button>
-              <button 
-                className="bg-gray-400 bg-hover-gray-500 px-4 py-2 rounded" 
+              <button
+                className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
                 onClick={handleCancel}
               >
                 Non

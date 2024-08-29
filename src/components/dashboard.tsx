@@ -18,6 +18,7 @@ import VoirProfil from "./voirProfil";
 import { Profile } from "../../type";
 import Link from "next/link";
 import LogoutButton from "./LogoutButton";
+import Loader from "./loader";
 
 interface Parent {
   id: string;
@@ -51,6 +52,8 @@ const Dashboard: React.FC = () => {
   const [loggedParent, setLoggedParent] = useState<Parent>(defaultParent);
   const [readenfant, setReadEnfant] = useState<Profile[] | null>(null);
   const [showReadProfile, setShowReadProfile] = useState<Boolean>(false);
+  const [loading, setLoading] = useState(true); // Ajouter un état pour le chargement
+
 
   const fetchParentData = async () => {
     const parentData = localStorage.getItem("connectedUser");
@@ -102,6 +105,9 @@ const Dashboard: React.FC = () => {
         console.log("readenfant :", parentWithChildrenData.children);
       } catch (error) {
         console.error("Erreur:", error);
+      }
+      finally {
+        setLoading(false); // Fin du chargement
       }
     }
   };
@@ -171,71 +177,73 @@ const Dashboard: React.FC = () => {
         </Link>
       </div>
       <div className="flex-grow p-8 space-y-8">
-        {/* Première carte */}
-        <div
-  className="bg-purple-700 p-6 rounded-lg mb-8 shadow-lg max-w-3xl mx-auto relative"
-  style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
->
-<div className="flex items-center justify-between mb-4">
-  <div className="flex items-center space-x-4 cursor-pointer">
-    <FaUser className="text-gray-800" size={48} />
-    <div className="flex items-center space-x-2 relative group">
-      <h2 className="text-white font-semibold text-4xl pt-6 leading-none">{loggedParent.nom}</h2>
-      <FaPen
-        className="text-purple-600 pb-54 cursor-pointer transform rotate-0"
-        size={20}
-        onClick={() => setShowParentEditForm(true)}
-      />
-      <span className="absolute left-full top-0 ml-2 opacity-0 text-sm text-gray-200 group-hover:opacity-100 transition-opacity duration-200">
-        Modifier mon profil 
-      </span>
-    </div>
-  </div>
-  <div className="text-white flex items-center justify-center space-x-1 pt-1 absolute top-3 right-6">
-      <FaSignOutAlt />
-      <LogoutButton />
-    </div>
-</div>
-
-
-  <div className="flex flex-col items-center">
-    {readenfant && readenfant.length < 3 ? (
-      <button
-        onClick={openAddForm}
-        className="text-white p-2 rounded-lg flex items-center justify-center space-x-1 text-2xl shadow-md "
-      >
-        <FaPlus size={20} /> <span>Ajouter un enfant </span>
-      </button>
-    ) : (
-      <p className="text-red-500">Vous ne pouvez pas ajouter plus de trois enfants</p>
-    )}
-  </div>
-</div>
-
-
-        {/* Deuxième carte */}
-        <div
-          className="dark:bg-purple-700 p-6 rounded-lg shadow-lg max-w-3xl mx-auto"
-          style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
-        >
-          <h3 className="text-yellow-500 text-2xl mb-4 font-bold">Mes Enfants</h3>
-          <div className="space-y-4">
-            {readenfant?.map((profile, index) => (
-              <ProfileCard
-                key={index}
-                // id={profile?.id || 'zero'}
-                // pseudo={profile?.pseudo || 'Pseudo Inconnu'}
-                // image={profile? || '/path/to/default/image.jpg'}
-                enfant={profile}
-                onEdit={() => openEditForm(profile)}
-                onDelete={() => openDeleteConfirm(profile)}
-                readProfile={() => openReadProfile(profile)}
-                onHistory={() => (window.location.href = "/history")} // Replace with proper routing logic
-              />
-            ))}
-          </div>
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            {/* Première carte */}
+            <div
+              className="bg-purple-700 p-6 rounded-lg mb-8 shadow-lg max-w-3xl mx-auto relative"
+              style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-4 cursor-pointer">
+                  <FaUser className="text-gray-800" size={48} />
+                  <div className="flex items-center space-x-2 relative group">
+                    <h2 className="text-white font-semibold text-4xl pt-6 leading-none">{loggedParent.nom}</h2>
+                    <FaPen
+                      className="text-purple-600 pb-54 cursor-pointer transform rotate-0"
+                      size={20}
+                      onClick={() => setShowParentEditForm(true)}
+                    />
+                    <span className="absolute left-full top-0 ml-2 opacity-0 text-sm text-gray-200 group-hover:opacity-100 transition-opacity duration-200">
+                      Modifier mon profil 
+                    </span>
+                  </div>
+                </div>
+                <div className="text-white flex items-center justify-center space-x-1 pt-1 absolute top-3 right-6">
+                  <FaSignOutAlt />
+                  <LogoutButton />
+                </div>
+              </div>
+  
+              <div className="flex flex-col items-center">
+                {readenfant && readenfant.length < 5 ? (
+                  <button
+                    onClick={openAddForm}
+                    className="text-white p-2 rounded-lg flex items-center justify-center space-x-1 text-2xl shadow-md"
+                  >
+                    <FaPlus size={20} /> <span>Ajouter un enfant </span>
+                  </button>
+                ) : (
+                  <p className="text-red-500">Vous ne pouvez pas ajouter plus de cinq enfants</p>
+                )}
+              </div>
+            </div>
+  
+            {/* Deuxième carte */}
+            <div
+              className="dark:bg-purple-700 p-6 rounded-lg shadow-lg max-w-3xl mx-auto"
+              style={{ backgroundImage: "url(/images/fondBleuNuit.jpg)" }}
+            >
+              <h3 className="text-yellow-500 text-2xl mb-4 font-bold">Mes Enfants</h3>
+              <div className="space-y-4">
+                {readenfant?.map((profile, index) => (
+                  <ProfileCard
+                    key={index}
+                    enfant={profile}
+                    onEdit={() => openEditForm(profile)}
+                    onDelete={() => openDeleteConfirm(profile)}
+                    readProfile={() => openReadProfile(profile)}
+                    onHistory={() => (window.location.href = "/history")} // Replace with proper routing logic
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
+      
       <Footer /> {/* Footer component */}
       {showAddForm && (
         <ProfileForm
@@ -270,6 +278,7 @@ const Dashboard: React.FC = () => {
       )}
     </div>
   );
+  
 };
 
 export default Dashboard;

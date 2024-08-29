@@ -1,5 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
+import Loader from './loader';
+
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -34,10 +36,9 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, forAdmin }) => {
   
     checkAccess();
   }, [connectedAdmin, connectedUser, forAdmin, router]);
-  
-  
+
   if (redirecting) {
-    return null; 
+    return <Loader />; 
   }
 
   return <>{children}</>;

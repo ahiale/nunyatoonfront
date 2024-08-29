@@ -114,7 +114,7 @@ const ProfileEditForm: React.FC<ProfileEditFormProps> = ({ onClose, onSubmit, in
     const numericValue = value === '' ? 0 : Number(value); 
 
     if (numericValue < 5 || numericValue > 15) {
-      setErrorMessage('Un enfant doit avoir entre 5 et 14 ans.');
+      setErrorMessage('Un enfant doit avoir entre 5 et 15 ans.');
     } else {
       setErrorMessage('');
     }

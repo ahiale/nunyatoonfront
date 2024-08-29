@@ -73,17 +73,6 @@ const EditVideoForm: React.FC<EditVideoFormProps> = ({ video, onClose, onUpdate 
             />
           </div>
 
-          <div className="mb-4 relative">
-            <FaClock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-            <textarea
-              id="duree"
-              value={duree}
-              onChange={(e) => setDuree(e.target.value)}
-              placeholder="Duree"
-              className="mt-1 block w-full pl-8 p-2 border-2 border-gray-400 rounded-md bg-white text-black focus:border-purple-600 focus:outline-none"
-            />
-          </div>
-
           <div className="flex justify-end space-x-4">
             <button
               type="button"

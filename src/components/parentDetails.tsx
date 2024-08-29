@@ -9,7 +9,9 @@ interface Parent {
     id: string;
     nom: string;
     email: string;
+    // codeParental: string,
     children: any[];
+    
     date_inscription:string;
   }
   
@@ -30,6 +32,7 @@ const ParentDetails: React.FC<ParentDetailsProps> = ({ parent, onClose }) => {
           <p><strong>Email:</strong> {parent.email}</p>
           <p><strong>Contact:</strong> {parent.contact}</p>
           <p><strong>Pays:</strong> {parent.pays}</p>
+          {/* <p><strong>Code parental:</strong> {parent.codeParental}</p> */}
           <p><strong>Date d'inscription:</strong> {new Date(parent.date_inscription).toLocaleDateString()}</p>
         </div>
 

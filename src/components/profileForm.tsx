@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaUser, FaCalendarAlt, FaKey, FaClock } from 'react-icons/fa';
 import { Profile } from '../../type';
+import Swal from 'sweetalert2';
+import Loader from './loader';
 
 const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { onClose: () => void; onSubmit: (profile: Profile) => void; initialProfile?: Profile, loggedParentId?: string }) => {
     const [pseudo, setPseudo] = useState(initialProfile?.pseudo || '');
@@ -10,6 +12,8 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleDaysChange = (day: string) => {
         setDays((prevDays) => (prevDays.includes(day) ? prevDays.filter((d) => d !== day) : [...prevDays, day]));
@@ -32,7 +36,8 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
     };
 
     const handleSubmit = async () => {
-        onClose();
+        setLoading(true);
+        setErrorMessage('');
         try {
             const enfantResponse = await fetch('http://localhost:8000/enfant/createEnfant', {
                 method: 'POST',
@@ -72,10 +77,23 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
                 throw new Error('Erreur lors de la création du temps d\'écran');
             }
 
+            Swal.fire({
+                title: 'Succès',
+                text: 'Un nouvel enfant a été ajouté avec succès',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                onSubmit({ pseudo, image: '' });
+                onClose();
+            });
+
             console.log('Enfant et temps d\'écran créés avec succès');
             onSubmit({ pseudo, image: '' });
         } catch (error: any) {
             console.error(error.message);
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -107,12 +125,14 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
+              {loading && <Loader />}
             <div className="bg-white p-8 rounded-lg w-full max-w-md shadow-lg">
                 {errorMessage && (
                     <div className="text-red-600 mb-4">
                         {errorMessage}
                     </div>
                 )}
+                 
                 <div className="space-y-4">
                     <div className="relative">
                         <input
@@ -183,12 +203,15 @@ const ProfileForm = ({ onClose, onSubmit, initialProfile, loggedParentId }: { on
                         </div>
                     </div>
                 </div>
+             
                 <div className="flex space-x-4 mt-4">
                     <button onClick={handleSubmit} className="p-2 bg-purple-700 text-white rounded">Enregistrer</button>
                     <button onClick={onClose} className="p-2 bg-gray-400 text-white rounded">Annuler</button>
                 </div>
+ 
             </div>
         </div>
+   
     );
 };
 

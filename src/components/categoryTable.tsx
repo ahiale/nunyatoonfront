@@ -1,6 +1,8 @@
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState, useEffect } from 'react';
+import Loader from './loader';
+
 
 interface Categorie {
   id: string;
@@ -26,6 +28,7 @@ const CategoryTable: React.FC = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);  // Ajout de l'état de chargement
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -40,6 +43,8 @@ const CategoryTable: React.FC = () => {
         setCategories(categorieData);
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
+      } finally {
+        setIsLoading(false);  // Fin du chargement
       }
     };
 
@@ -59,7 +64,6 @@ const CategoryTable: React.FC = () => {
           throw new Error(`Erreur lors de la mise à jour de la catégorie: ${response.statusText}`);
         }
 
-        // Mettre à jour la catégorie dans l'état local
         setCategories(categories.map(cat => cat.id === editingCategory.id ? { ...cat, titre: newTitle } : cat));
         setEditingCategory(null);
       } catch (error) {
@@ -78,7 +82,6 @@ const CategoryTable: React.FC = () => {
         }
 
         const newCategory: Categorie = await response.json();
-        // Ajouter la nouvelle catégorie à l'état local
         setCategories(prevCategories => [...prevCategories, newCategory]);
       } catch (error) {
         console.error("Erreur lors de l'ajout de la catégorie", error);
@@ -86,9 +89,7 @@ const CategoryTable: React.FC = () => {
     }
     setNewTitle('');
     setShowForm(false);
-};
-
-
+  };
 
   const handleEditCategory = (category: Categorie) => {
     setEditingCategory(category);
@@ -112,7 +113,6 @@ const CategoryTable: React.FC = () => {
           throw new Error(`Erreur lors de la suppression de la catégorie: ${response.statusText}`);
         }
 
-        // Filtrer la catégorie supprimée de l'état local
         setCategories(prevCategories => prevCategories.filter(category => category.id !== categoryToDelete));
         setDeleteError(null);
       } catch (error) {
@@ -201,37 +201,41 @@ const CategoryTable: React.FC = () => {
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full mx-auto">
-          <thead className='bg-purple-400'>
-            <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-white ">Titre</th>
-              <th className="px-3 py-2 text-center text-xs font-medium text-white ">Actions</th>
-            </tr>
-          </thead>
-          <tbody className='divide-y divide-purple-600'>
-            {categories.map(category => (
-              <tr key={category.id}>
-                <td className="py-2 px-3 border-b text-black">{category.titre}</td>
-                <td className="py-2 px-3 border-b text-black text-center space-x-2">
-                  <button
-                    className="text-blue-500"
-                    onClick={() => handleEditCategory(category)}
-                  >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button
-                    className="text-red-500"
-                    onClick={() => openDeleteConfirm(category.id)}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </td>
+      {isLoading ? (
+        <Loader />  // Afficher le Loader pendant le chargement
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full mx-auto">
+            <thead className='bg-purple-400'>
+              <tr>
+                <th className="px-3 py-2 text-left text-xs font-medium text-white ">Titre</th>
+                <th className="px-3 py-2 text-center text-xs font-medium text-white ">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className='divide-y divide-purple-600'>
+              {categories.map(category => (
+                <tr key={category.id}>
+                  <td className="py-2 px-3 border-b text-black">{category.titre}</td>
+                  <td className="py-2 px-3 border-b text-black text-center space-x-2">
+                    <button
+                      className="text-blue-500"
+                      onClick={() => handleEditCategory(category)}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      className="text-red-500"
+                      onClick={() => openDeleteConfirm(category.id)}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

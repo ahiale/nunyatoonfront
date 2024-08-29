@@ -8,6 +8,8 @@ import ParentCard from "./parentCard";
 import { useDispatch } from "react-redux";
 import { updateParentState } from "@/store/slice";
 import Navbar2 from "./Navbar2";
+import Loader from "./loader";
+
 
 interface Profile {
   id: string;
@@ -48,10 +50,12 @@ const defaultProfile: Profile = {
 const Profiles: React.FC = () => {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [parentWithChildren, setParentWithChildren] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true); // État pour le chargement
   const dispatch = useDispatch();
 
   const fetchParentWithChildrenData = async () => {
     try {
+      setLoading(true); // Début du chargement
       // Récupération des enfants depuis l'API
       const enfantsResponse = await fetch("http://127.0.0.1:8000/enfant/read_all_enfants", {
         method: "GET",
@@ -68,7 +72,7 @@ const Profiles: React.FC = () => {
 
       // Récupération du parent connecté depuis le localStorage
       const parent = localStorage.getItem("connectedUser");
-      console.log(parent)
+      console.log(parent);
       if (parent) {
         const parentJSON = JSON.parse(parent);
 
@@ -92,6 +96,8 @@ const Profiles: React.FC = () => {
       }
     } catch (error) {
       console.error("Erreur:", error);
+    } finally {
+      setLoading(false); // Fin du chargement
     }
   };
 
@@ -111,12 +117,16 @@ const Profiles: React.FC = () => {
 
         <h1 className="text-5xl lg:text-5xl font-bold text-white mb-8">Quel est votre profil?</h1>
 
-        <div className="flex space-x-4 lg:space-x-8">
-          <ParentCard profile={profile} />
-          {parentWithChildren?.children.map((enfant: Enfant) => (
-            <EnfantCard key={enfant.id} enfant={enfant} />
-          ))}
-        </div>
+        {loading ? (
+          <Loader /> // Affichage du loader si en cours de chargement
+        ) : (
+          <div className="flex space-x-4 lg:space-x-8">
+            <ParentCard profile={profile} />
+            {parentWithChildren?.children.map((enfant: Enfant) => (
+              <EnfantCard key={enfant.id} enfant={enfant} />
+            ))}
+          </div>
+        )}
       </div>
     </Provider>
   );

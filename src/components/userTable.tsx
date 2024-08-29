@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faEye, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ParentProfileForm from "./parentProfilForm";
 import ParentDetails from "./parentDetails";
+import Loader from "./loader";
+
 
 interface Parent {
   pays: string;
@@ -22,6 +24,7 @@ const UserTable: React.FC = () => {
   const [currentParent, setCurrentParent] = useState<Parent | null>(null);
   const [selectedParent, setSelectedParent] = useState<Parent | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [loading, setLoading] = useState(true); // État de chargement
 
   // Fonction pour fermer tous les modals
   const closeAllModals = () => {
@@ -78,6 +81,8 @@ const UserTable: React.FC = () => {
         setParents(sortedParents);
       } catch (error) {
         console.error("Erreur lors de la récupération des données:", error);
+      } finally {
+        setLoading(false); // Fin du chargement
       }
     };
 
@@ -158,6 +163,7 @@ const UserTable: React.FC = () => {
       }
     }
   };
+
   const handleCloseEditForm = () => {
     setIsEditFormOpen(false);
     setCurrentParent(null);
@@ -165,6 +171,8 @@ const UserTable: React.FC = () => {
 
   return (
     <div className="overflow-x-auto font-Grandstander">
+      {loading && <Loader />} {/* Affichage du loader pendant le chargement */}
+
       <div className="text-black font-bold text-3xl pb-8 pt-8">
         Liste des utilisateurs
       </div>
@@ -188,80 +196,74 @@ const UserTable: React.FC = () => {
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-purple-600">
-          {parentsWithChildren.map((parent, index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
-                <div>{parent.nom}</div>
+        <tbody className="divide-y divide-gray-200">
+          {parentsWithChildren.map(parent => (
+            <tr key={parent.id}>
+              <td className="px-6 py-4 whitespace-nowrap  font-medium text-black">
+                {parent.nom}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
-                <div>{parent.email}</div>
+              <td className="px-6 py-4 whitespace-nowrap  text-black">
+                {parent.email}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
-                <div>{parent.contact}</div>
+              <td className="px-6 py-4 whitespace-nowrap  text-black">
+                {parent.contact}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-black border-b">
-                <div>{new Date(parent.date_inscription).toLocaleDateString()}</div>
+              <td className="px-6 py-4 whitespace-nowrap  text-black">
+                {new Date(parent.date_inscription).toLocaleDateString()}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium border-b">
+              <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
                 <button
-                  className="text-green-600 hover:text-green-900 mx-2"
-                  onClick={() => handleView(parent)} // Ouvre le modal ParentDetails avec le parent sélectionné
+                  onClick={() => handleView(parent)}
+                  className="text-green-600 hover:text-green-900 mr-4"
                 >
-                  <FontAwesomeIcon icon={faEye} title="Voir" />
+                  <FontAwesomeIcon icon={faEye} />
                 </button>
                 <button
-                  className="text-indigo-600 hover:text-indigo-900 mx-2"
                   onClick={() => handleEdit(parent)}
+                  className="text-blue-600 hover:text-blue-900 mr-4"
                 >
-                  <FontAwesomeIcon icon={faEdit} title="Modifier" />
+                  <FontAwesomeIcon icon={faEdit} />
                 </button>
                 <button
-                  className="text-red-600 hover:text-red-900 mx-2"
                   onClick={() => openConfirmationDialog(parent.id)}
+                  className="text-red-600 hover:text-red-900"
                 >
-                  <FontAwesomeIcon icon={faTrash} title="Supprimer" />
+                  <FontAwesomeIcon icon={faTrash} />
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {/* Modal pour la suppression */}
+      {isEditFormOpen && currentParent && (
+        <ParentProfileForm
+          parentData={currentParent}
+          onClose={handleCloseEditForm}
+          onSubmit={handleSubmit}
+        />
+      )}
       {isDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50 text-black">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-bold mb-4">Confirmer la suppression</h3>
+            <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
             <p>Êtes-vous sûr de vouloir supprimer ce parent ?</p>
-            <div className="flex gap-4 mt-4 justify-end">
+            <div className="mt-4">
               <button
                 onClick={handleDelete}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                className="bg-red-600 text-white px-4 py-2 rounded-lg mr-2"
               >
-                oui
+                Supprimer
               </button>
               <button
                 onClick={handleCloseDialog}
-                className="bg-gray-300 hover:bg-gray-500 px-4 py-2 rounded"
+                className="bg-gray-300 text-black px-4 py-2 rounded-lg"
               >
-               non
+                Annuler
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Formulaire d'édition */}
-      {isEditFormOpen && currentParent && (
-        <ParentProfileForm
-          onClose={handleCloseEditForm}
-          onSubmit={handleSubmit}
-          parentData={currentParent} // Utilisation de currentParent ici
-        />
-      )}
-
-      {/* Modal de détails */}
       {isDetailsOpen && selectedParent && (
         <ParentDetails parent={selectedParent} onClose={handleCloseDetails} />
       )}

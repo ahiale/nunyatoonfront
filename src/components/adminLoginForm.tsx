@@ -7,16 +7,19 @@ import { useDispatch } from 'react-redux';
 import { updateParentState } from '@/store/slice';
 import { Provider } from 'react-redux';
 import { store } from '@/store/store';
+import Loader from './loader';
 
 export default function 
 LoginForm() {
     const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(''); // State for error messages
     const router = useRouter();
     const dispatch = useDispatch()
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true);
     
         const formData = new FormData(event.target as HTMLFormElement);
         const rawFormData = {
@@ -60,11 +63,16 @@ LoginForm() {
             setError(`Erreur de connexion : ${errorMessage}`);
             console.log(error);
         }
+        finally {
+            setLoading(false); 
+        }
     };
 
     return (
         <Provider store={store}>
+             {loading && <Loader />}
         <form onSubmit={handleSubmit} className="login-form text-black">
+        
             <div className="mb-4 relative">
                 <input
                     type="email"

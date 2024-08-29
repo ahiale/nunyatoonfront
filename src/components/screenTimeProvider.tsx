@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { RootState, store } from '@/store/store';
@@ -16,6 +17,8 @@ export const ScreenTimeContext = createContext<ScreenTimeContextType | undefined
 
 export const ScreenTimeProvider = ({ children }: ScreenTimeProviderProps) => {
     const [isScreenTimeExpired, setIsScreenTimeExpired] = useState(false);
+    const [isDayExpired, setIsisDayExpired] = useState(false);
+    const [isNotstarted, setNotstarted] = useState(false);
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [enfantId, setEnfantId] = useState<string>('');
     const enfantData = useSelector((state: RootState) => state.AppStates.enfantState);
@@ -28,12 +31,21 @@ export const ScreenTimeProvider = ({ children }: ScreenTimeProviderProps) => {
 
     useEffect(() => {
         if (enfantId) {
+            console.log(enfantId)
             const interval = setInterval(() => {
                 fetch(`http://127.0.0.1:8000/tempsEcran/check-screen-time/${enfantId}`)
-                    .then(response => response.json())
+                    .then(response => response.json())                    
                     .then(data => {
-                        if (data.status === 'expired') {
+                        console.log(data)
+                        if(data.status=='not_started')
+                        {
+                            setNotstarted(true);
+                            return;
+                        }
+                       if (data.status === 'expired') {
                             setIsScreenTimeExpired(true);
+                        } else if (data.status === 'daysexpired') {
+                            setIsisDayExpired(true);
                         } else if (data.timeLeft <= 10 && data.timeLeft > 0) {
                             setTimeLeft(data.timeLeft);
                         }
@@ -60,6 +72,20 @@ export const ScreenTimeProvider = ({ children }: ScreenTimeProviderProps) => {
     }, [timeLeft]);
 
     useEffect(() => {
+        if (isNotstarted) {
+            Swal.fire({
+                title: 'Accès Refusé!',
+                text: "votre temps d'ecran n'a pas encore commence.",
+                icon: 'warning',
+                timer: 5000, // Temps avant la fermeture automatique
+                timerProgressBar: true,
+                willClose: () => {
+                    
+                    window.location.href = '/profil'; // Rediriger vers la page de login
+                }
+            });
+            return;
+        }
         if (isScreenTimeExpired) {
             Swal.fire({
                 title: 'Temps écoulé!',
@@ -73,7 +99,22 @@ export const ScreenTimeProvider = ({ children }: ScreenTimeProviderProps) => {
                 }
             });
         }
-    }, [isScreenTimeExpired]);
+        if (isDayExpired) {
+            Swal.fire({
+                title: 'Accès Refusé!',
+                text: "Vous n'êtes pas autorisé à vous connecter aujourd'hui.",
+                icon: 'error',
+                timer: 5000,
+                confirmButtonText: 'OK',
+                timerProgressBar: true,
+                willClose: () => {
+                   
+                    window.location.href = '/profil'; // Rediriger vers la page de login
+                }
+            });
+        }
+       
+    }, [isScreenTimeExpired,isDayExpired, isNotstarted]);
 
     return (
         <Provider store={store}>
